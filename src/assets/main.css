@@ -1,0 +1,8 @@
+* {
+  margin: 0px;
+  font-family: "Segoe UI", "Helvetica Neue", "Roboto", Arial, sans-serif;
+}
+
+html, body, #app {
+  height: 100%;
+}
