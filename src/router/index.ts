@@ -15,6 +15,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'layout',
+      redirect: '/dash-emp',
       component: LayoutView,
       children: [
         {

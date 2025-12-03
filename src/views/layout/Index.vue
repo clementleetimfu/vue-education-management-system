@@ -1,12 +1,41 @@
 <script setup lang="ts">
+import { useEmployeeStore } from '@/stores/emp';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const empStore = useEmployeeStore();
 
 const handleLogout = () => {
-  console.log('logout');
+  ElMessageBox.confirm(
+    'Are you sure you want to logout?',
+    'Warning',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      localStorage.removeItem('token');
+      ElMessage({
+        type: 'success',
+        message: 'Logout successful',
+      })
+      router.push("/login");
+      empStore.setUsername('');
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Logout canceled',
+      })
+    })
 }
 
 </script>
 <template>
-  <div class="common-layout">
+  <div id="common-layout">
     <el-container>
       <el-header class="header">
         <el-text class="header-left"><el-icon>
@@ -14,8 +43,8 @@ const handleLogout = () => {
           </el-icon>Education Management System</el-text>
         <el-text class="header-username"><el-icon>
             <Avatar />
-          </el-icon>&nbsp;Clement</el-text>
-        <el-button class="header-logout-button" color="#162640"><el-icon>
+          </el-icon>&nbsp;{{ empStore.username }}</el-text>
+        <el-button @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
             <SwitchButton />
           </el-icon>&nbsp;Logout</el-button>
       </el-header>
@@ -70,7 +99,7 @@ const handleLogout = () => {
         <el-main class="main">
           <router-view></router-view>
         </el-main>
-      
+
       </el-container>
     </el-container>
   </div>
@@ -100,7 +129,7 @@ const handleLogout = () => {
   font-size: 15px;
 }
 
-.common-layout {
+#common-layout {
   height: 100%;
 }
 
