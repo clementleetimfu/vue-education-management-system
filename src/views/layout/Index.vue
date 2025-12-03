@@ -48,7 +48,7 @@ const handleLogout = () => {
             <el-text class="header-username"><el-icon>
                 <Avatar />
               </el-icon>&nbsp;{{ empStore.username }}</el-text>
-            <el-button @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
+            <el-button link @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
                 <SwitchButton />
               </el-icon>&nbsp;Logout</el-button>
           </el-col>
