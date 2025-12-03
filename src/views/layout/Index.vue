@@ -38,15 +38,21 @@ const handleLogout = () => {
   <div id="common-layout">
     <el-container>
       <el-header class="header">
-        <el-text class="header-left"><el-icon>
-            <Management />
-          </el-icon>Education Management System</el-text>
-        <el-text class="header-username"><el-icon>
-            <Avatar />
-          </el-icon>&nbsp;{{ empStore.username }}</el-text>
-        <el-button @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
-            <SwitchButton />
-          </el-icon>&nbsp;Logout</el-button>
+        <el-row align="middle">
+          <el-col :span="20">
+            <el-text class="header-left"><el-icon>
+                <Management />
+              </el-icon>Education Management System</el-text>
+          </el-col>
+          <el-col :span="4" class="header-right">
+            <el-text class="header-username"><el-icon>
+                <Avatar />
+              </el-icon>&nbsp;{{ empStore.username }}</el-text>
+            <el-button @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
+                <SwitchButton />
+              </el-icon>&nbsp;Logout</el-button>
+          </el-col>
+        </el-row>
       </el-header>
       <el-container>
         <el-aside class="aside" width="200px">
@@ -106,23 +112,30 @@ const handleLogout = () => {
 </template>
 
 <style scoped>
+.el-row {
+  height: 100%;
+}
+
 .header {
-  display: flex;
-  align-items: center;
   background-color: #162640;
 }
 
 .header-left {
-  flex: 1;
   color: white;
   font-size: 20px;
   font-weight: bold;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .header-username {
   color: white;
   font-size: 15px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .header-logout-button {
