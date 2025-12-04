@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import type { FormInstance, FormRules } from 'element-plus';
-import { addDepartment, findAllDepartment } from '@/api/dept';
-import type { FindAllDepartmentResponse, AddDepartmentRequest as DeptForm} from '@/api/dept';
+import { editDepartment, addDepartment, findAllDepartment, deleteDepartment } from '@/api/dept';
+import type { FindAllDepartmentResponse } from '@/api/dept';
 import type { ApiResponse } from '@/api/common';
-import { ca } from 'element-plus/es/locales.mjs';
+
+interface DeptForm {
+  name: string;
+}
 
 const deptTableData = ref<FindAllDepartmentResponse[]>([]);
 const dialogFormVisible = ref<boolean>(false);
 const dialogFormTitle = ref<string>('');
 const dialogFormInput = reactive<DeptForm>({ name: '' });
 const dialogFormRef = ref<FormInstance | null>(null);
+const currentEditId = ref<number>(0);
 
 const rules = reactive<FormRules<DeptForm>>({
   name: [
@@ -26,7 +30,7 @@ onMounted(() => {
 
 const findAllDept = async () => {
   try {
-    const result: ApiResponse<FindAllDepartmentResponse[]>= await findAllDepartment();
+    const result: ApiResponse<FindAllDepartmentResponse[]> = await findAllDepartment();
     if (result?.code === 0) {
       deptTableData.value = result?.data;
     } else {
@@ -37,58 +41,80 @@ const findAllDept = async () => {
   }
 }
 
-
-
 const handleAddDepartment = () => {
   dialogFormVisible.value = true;
   dialogFormTitle.value = 'Add Department';
   dialogFormInput.name = '';
 }
 
-const handleEdit = () => {
+const handleEdit = async (row: FindAllDepartmentResponse) => {
   dialogFormVisible.value = true;
   dialogFormTitle.value = 'Edit Department';
-
-  // TODO
-  // get department value
-  // 
-
-
+  dialogFormInput.name = row?.name;
+  currentEditId.value = row?.id;
 }
 
-const handleDelete = async () => {
-
-
-
-
+const handleDelete = async (id: number) => {
+  ElMessageBox.confirm(
+    'Are you sure you want to delete this department?',
+    'Warning',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(async () => {
+      try {
+        const result: ApiResponse<boolean> = await deleteDepartment(id);
+        if (result?.code === 0 && result?.data) {
+          ElMessage.success("Department deleted successfully");
+          findAllDept();
+        } else {
+          ElMessage.error(result?.message);
+        }
+      } catch (error: any) {
+        ElMessage.error("Failed to delete department");
+      }
+    })
+    .catch(() => {
+      ElMessage.info("Department deletion canceled");
+    })
 }
 
 const handleCloseDialogForm = () => {
-  if (dialogFormRef && dialogFormRef.value) {
-    dialogFormRef.value.resetFields();
-  }
+  dialogFormRef?.value?.resetFields();
 }
 
 const handleDialogFormSubmit = async (type: string) => {
-  const actionType = type.trim().toLowerCase()
-  try {
-    if (actionType.includes('add')) {
-      const result: ApiResponse<boolean> = await addDepartment(dialogFormInput);
-      if (result?.code === 0) {
-        ElMessage.success("Department added successfully");
-        dialogFormVisible.value = false;
-        findAllDept();
-      } else {
-        ElMessage.error(result?.message);
+  if (!dialogFormRef.value) return;
+  await dialogFormRef.value.validate(async (valid) => {
+    if (!valid) return;
+    const actionType = type.trim().toLowerCase();
+    try {
+      if (actionType.includes('add')) {
+        const result: ApiResponse<boolean> = await addDepartment(dialogFormInput);
+        if (result?.code === 0 && result?.data) {
+          ElMessage.success("Department added successfully");
+          dialogFormVisible.value = false;
+          findAllDept();
+        } else {
+          ElMessage.error(result?.message);
+        }
+      } else if (actionType.includes('edit')) {
+        const result: ApiResponse<boolean> = await editDepartment({ id: currentEditId.value, name: dialogFormInput.name });
+        if (result?.code === 0 && result?.data) {
+          ElMessage.success("Department edited successfully");
+          dialogFormVisible.value = false;
+          findAllDept();
+        } else {
+          ElMessage.error(result?.message);
+        }
       }
-    } else if (actionType.includes('edit')) {
-      // TODO
-      // edit department logic
-
+    } catch (error: any) {
+      ElMessage.error(`Failed to submit ${actionType} department form`);
     }
-  } catch (error: any) {
-    ElMessage.error(`Failed to submit ${actionType} department form`);
-  }
+  })
 }
 
 </script>
@@ -103,11 +129,11 @@ const handleDialogFormSubmit = async (type: string) => {
     <el-table-column prop="name" label="Department Name" align="center" />
     <el-table-column prop="updateTime" label="Update Time" align="center" />
     <el-table-column fixed="right" label="Actions" align="center">
-      <template #default>
-        <el-button type="primary" size="small" @click="handleEdit">
+      <template #default="{ row }">
+        <el-button type="primary" size="small" @click="handleEdit(row)">
           Edit
         </el-button>
-        <el-button type="danger" size="small" @click="handleDelete">Delete</el-button>
+        <el-button type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>
