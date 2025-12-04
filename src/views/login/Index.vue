@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import type { LoginRequest as  LoginForm} from '@/api/login';
+import type { LoginRequest as LoginForm } from '@/api/login';
 import { ElMessage } from 'element-plus';
 import { useEmployeeStore } from '@/stores/emp';
 import { login } from '@/api/login';
@@ -16,14 +16,25 @@ const loginForm = reactive<LoginForm>({
   password: '',
 });
 
+const getJwtPayload = (token: string): any => {
+  const payload = token.split('.')[1];
+  if (!payload) return '';
+  const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+  return JSON.parse(decoded);
+}
+
+const getUsernameFromJwt = (token: string): string => {
+  const payload = getJwtPayload(token);
+  return payload?.username || '';
+}
+
 const handleLogin = async (): Promise<void> => {
   try {
     const result: ApiResponse<LoginResponse> = await login(loginForm);
     if (result?.code === 0) {
       const token: string = result.data.token || '';
-      const username: string = result.data.username || '';
-      localStorage.setItem('token', token);
-      empStore.setUsername(username);
+      sessionStorage.setItem('token', token);
+      empStore.setUsername(getUsernameFromJwt(token));
       router.push("/dash-emp");
       ElMessage.success('Login success');
     } else {
@@ -43,15 +54,15 @@ const handleClear = (): void => {
 <template>
   <div id="container">
     <el-form :model="loginForm" label-width="auto">
-      
+
       <h1 class="title">EMS</h1>
-      
+
       <el-form-item label="Username">
         <el-input v-model="loginForm.username" />
       </el-form-item>
 
       <el-form-item label="Password">
-        <el-input v-model="loginForm.password" type="password"/>
+        <el-input v-model="loginForm.password" type="password" />
       </el-form-item>
 
       <div class="btn-group">
@@ -60,7 +71,7 @@ const handleClear = (): void => {
           <el-button @click="handleClear">Clear</el-button>
         </el-form-item>
       </div>
-      
+
     </el-form>
   </div>
 </template>

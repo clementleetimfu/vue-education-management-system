@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
 
-export const useEmployeeStore = defineStore('employee', () => {
-  const username = ref<string>('');
-  const setUsername = (name: string) => {
-    username.value = name;
-  }
-  return { username, setUsername };
+export const useEmployeeStore = defineStore('employee', {
+  state: () => ({
+    username: '' as string,
+  }),
+  actions: {
+    setUsername(name: string) {
+      this.username = name;
+    },
+  },
+  persist: {
+    storage: sessionStorage,
+  },
 });

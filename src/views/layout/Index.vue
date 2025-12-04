@@ -17,7 +17,7 @@ const handleLogout = () => {
     }
   )
     .then(() => {
-      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       ElMessage({
         type: 'success',
         message: 'Logout successful',
