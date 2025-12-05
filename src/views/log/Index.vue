@@ -44,13 +44,13 @@ onMounted(() => {
 </script>
 <template>
   <el-table :data="logTableData" border style="width: 100%">
-    <el-table-column prop="operator" label="Operator" width="180" align="center" />
-    <el-table-column prop="operateTime" label="Operate Time" width="180" align="center" />
-    <el-table-column prop="className" label="Class Name" align="center" />
-    <el-table-column prop="methodName" label="Method Name" align="center" />
-    <el-table-column prop="duration" label="Time Cost（ms）" align="center" />
+    <el-table-column prop="operator" label="Operator" width="125" align="center" />
+    <el-table-column prop="operateTime" label="Operate Time" width="175" align="center" />
+    <el-table-column prop="className" label="Class Name" width="300" align="center" />
+    <el-table-column prop="methodName" label="Method Name" width="200" align="center" />
+    <el-table-column prop="duration" label="Time Cost（ms）" width="100" align="center" />
     <el-table-column prop="methodParams" label="Method Parameters" align="center" />
-    <el-table-column prop="returnValue" label="Return Value" align="center" />
+    <el-table-column prop="returnValue" label="Return Value" width="300" align="center" />
   </el-table>
   <el-pagination v-model:current-page="pageData.page" v-model:page-size="pageData.pageSize" :page-sizes="pageSizes"
     size="default" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handlePageSizeChange"
