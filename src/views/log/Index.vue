@@ -2,8 +2,8 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { findActivityLog } from '@/api/log';
-import type { ApiResponse, PageResult } from '@/api/common';
-import type { FindActivityLogResponse, Page } from '@/api/log';
+import type { ApiResponse, PageResult, Page } from '@/api/common';
+import type { FindActivityLogResponse } from '@/api/log';
 
 const logTableData = ref<FindActivityLogResponse[]>([]);
 const pageData = reactive<Page>({
@@ -43,12 +43,14 @@ onMounted(() => {
 
 </script>
 <template>
+    <h1>Activity Log</h1>
+
   <el-table :data="logTableData" border style="width: 100%">
     <el-table-column prop="operator" label="Operator" width="125" align="center" />
     <el-table-column prop="operateTime" label="Operate Time" width="175" align="center" />
     <el-table-column prop="className" label="Class Name" width="300" align="center" />
     <el-table-column prop="methodName" label="Method Name" width="200" align="center" />
-    <el-table-column prop="duration" label="Time Cost（ms）" width="100" align="center" />
+    <el-table-column prop="duration" label="Time Cost (ms)" width="125" align="center" />
     <el-table-column prop="methodParams" label="Method Parameters" align="center" />
     <el-table-column prop="returnValue" label="Return Value" width="300" align="center" />
   </el-table>
@@ -58,6 +60,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+.el-table {
+  margin-top: 20px;
+}
+
 .el-pagination {
   margin-top: 20px;
 }

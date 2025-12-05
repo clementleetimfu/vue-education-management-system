@@ -22,36 +22,43 @@ const router = createRouter({
           path: 'dash-emp',
           name: 'dash-emp',
           component: EmpDashboard,
+          meta: { requiresAuth: true } 
         },
         {
           path: 'dash-clazz-stud',
           name: 'dash-clazz-stud',
           component: ClazzStudDashboard,
+          meta: { requiresAuth: true }
         },
         {
           path: 'dept',
           name: 'dept',
           component: DepartmentView,
+          meta: { requiresAuth: true }
         },
         {
           path: 'emp',
           name: 'emp',
           component: EmployeeView,
+          meta: { requiresAuth: true }
         },
         {
           path: 'clazz',
           name: 'clazz',
           component: ClazzView,
+          meta: { requiresAuth: true }
         },
         {
           path: 'stud',
           name: 'stud',
           component: StudentView,
+          meta: { requiresAuth: true }
         },
         {
           path: 'log',
           name: 'log',
           component: LogView,
+          meta: { requiresAuth: true }
         }
       ],
     },
@@ -61,6 +68,16 @@ const router = createRouter({
       component: LoginView,
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!sessionStorage.getItem('token') 
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ path: '/login', query: { redirect: to.fullPath } })
+  } else {
+    next()
+  }
 })
 
 export default router

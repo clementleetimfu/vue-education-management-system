@@ -130,10 +130,10 @@ const handleDialogFormSubmit = async (type: string) => {
     <el-table-column prop="updateTime" label="Update Time" align="center" />
     <el-table-column fixed="right" label="Actions" align="center">
       <template #default="{ row }">
-        <el-button type="primary" size="small" @click="handleEdit(row)">
+        <el-button link type="primary" size="small" @click="handleEdit(row)">
           Edit
         </el-button>
-        <el-button type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        <el-button link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

@@ -35,7 +35,8 @@ const handleLogin = async (): Promise<void> => {
       const token: string = result.data.token || '';
       sessionStorage.setItem('token', token);
       empStore.setUsername(getUsernameFromJwt(token));
-      router.push("/dash-emp");
+      const redirect = router.currentRoute.value.query.redirect as string || '/dash-emp';
+      router.push(redirect);
       ElMessage.success('Login success');
     } else {
       ElMessage.error(result?.message);

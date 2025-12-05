@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import type { ApiResponse, PageResult } from './common';
+import type { ApiResponse, PageResult, Page } from './common';
 
 export interface FindActivityLogResponse {
   operator: string;
@@ -9,11 +9,6 @@ export interface FindActivityLogResponse {
   duration: number;
   methodParams: string;
   returnValue: string;
-}
-
-export interface Page {
-  page: number;
-  pageSize: number;
 }
 
 export const findActivityLog = (page: Page): Promise<ApiResponse<PageResult<FindActivityLogResponse>>> => request.get('/logs', { params: page });
