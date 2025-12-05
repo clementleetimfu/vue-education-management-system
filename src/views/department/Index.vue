@@ -25,10 +25,10 @@ const rules = reactive<FormRules<DeptForm>>({
 });
 
 onMounted(() => {
-  findAllDept();
+  getDeptTableData();
 });
 
-const findAllDept = async () => {
+const getDeptTableData = async () => {
   try {
     const result: ApiResponse<FindAllDepartmentResponse[]> = await findAllDepartment();
     if (result?.code === 0) {
@@ -69,7 +69,7 @@ const handleDelete = async (id: number) => {
         const result: ApiResponse<boolean> = await deleteDepartment(id);
         if (result?.code === 0 && result?.data) {
           ElMessage.success("Department deleted successfully");
-          findAllDept();
+          getDeptTableData();
         } else {
           ElMessage.error(result?.message);
         }
@@ -97,7 +97,7 @@ const handleDialogFormSubmit = async (type: string) => {
         if (result?.code === 0 && result?.data) {
           ElMessage.success("Department added successfully");
           dialogFormVisible.value = false;
-          findAllDept();
+          getDeptTableData();
         } else {
           ElMessage.error(result?.message);
         }
@@ -106,7 +106,7 @@ const handleDialogFormSubmit = async (type: string) => {
         if (result?.code === 0 && result?.data) {
           ElMessage.success("Department edited successfully");
           dialogFormVisible.value = false;
-          findAllDept();
+          getDeptTableData();
         } else {
           ElMessage.error(result?.message);
         }

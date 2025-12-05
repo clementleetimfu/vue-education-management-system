@@ -3,3 +3,7 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+export interface PageResult<T> {
+  total: number;
+  rows: T[];
+}
