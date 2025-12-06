@@ -21,6 +21,29 @@ export interface SearchEmployeeRequest {
   endDate: string;
 }
 
+export interface WorkExperience {
+  periodArr: string[];
+  startDate: string;
+  endDate: string;
+  companyName: string;
+  jobTitle: string;
+}
+
+export interface AddEmployeeRequest {
+  image: string;
+  username: string;
+  name: string;
+  gender: number | null;
+  jobTitle: number | null;
+  hireDate: string;
+  deptId: number | null;
+  phone: string;
+  salary: number | null;
+  workExpList: WorkExperience[];
+}
+
 export const searchEmployee = (params: any): Promise<ApiResponse<PageResult<SearchEmployeeResponse>>> => request.get('/emps/search', { params });
 
 export const deleteEmployee = (ids: number[]): Promise<ApiResponse<boolean>> => request.delete(`/emps?ids=${ids.join(',')}`);
+
+export const addEmployee = (data: AddEmployeeRequest): Promise<ApiResponse<boolean>> => request.post('/emps', data);
