@@ -43,9 +43,10 @@ onMounted(() => {
 
 </script>
 <template>
-    <h1>Activity Log</h1>
+  <h1>Activity Log</h1>
 
   <el-table :data="logTableData" border style="width: 100%">
+    <el-table-column type="index" label="No." width="50" align="center" />
     <el-table-column prop="operator" label="Operator" width="125" align="center" />
     <el-table-column prop="operateTime" label="Operate Time" width="175" align="center" />
     <el-table-column prop="className" label="Class Name" width="300" align="center" />
@@ -60,7 +61,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 .el-table {
   margin-top: 20px;
 }

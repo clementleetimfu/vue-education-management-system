@@ -42,8 +42,29 @@ export interface AddEmployeeRequest {
   workExpList: WorkExperience[];
 }
 
+export interface FindEmployeeByIdResponse {
+  id: number | null;
+  username: string;
+  name: string;
+  gender: number | null;
+  jobTitle: number | null;
+  salary: number | null;
+  image: string;
+  hireDate: string;
+  deptId: number | null;
+  workExpList: WorkExperience[];
+}
+
+interface UpdateEmployeeRequest extends AddEmployeeRequest {
+  id: number | null;
+}
+
 export const searchEmployee = (params: any): Promise<ApiResponse<PageResult<SearchEmployeeResponse>>> => request.get('/emps/search', { params });
 
 export const deleteEmployee = (ids: number[]): Promise<ApiResponse<boolean>> => request.delete(`/emps?ids=${ids.join(',')}`);
 
 export const addEmployee = (data: AddEmployeeRequest): Promise<ApiResponse<boolean>> => request.post('/emps', data);
+
+export const findEmployeeById = (id: number): Promise<ApiResponse<FindEmployeeByIdResponse>> => request.get(`/emps/${id}`);
+
+export const updateEmployee = (data: UpdateEmployeeRequest): Promise<ApiResponse<boolean>> => request.put('/emps', data);

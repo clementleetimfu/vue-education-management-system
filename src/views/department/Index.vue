@@ -90,9 +90,10 @@ const handleDialogFormSubmit = async (type: string) => {
   if (!dialogFormRef.value) return;
   await dialogFormRef.value.validate(async (valid) => {
     if (!valid) return;
-    const actionType = type.trim().toLowerCase();
+    let actionType = type.trim().toLowerCase();
     try {
       if (actionType.includes('add')) {
+        actionType = 'add';
         const result: ApiResponse<boolean> = await addDepartment(dialogFormInput);
         if (result?.code === 0 && result?.data) {
           ElMessage.success("Department added successfully");
@@ -102,6 +103,7 @@ const handleDialogFormSubmit = async (type: string) => {
           ElMessage.error(result?.message);
         }
       } else if (actionType.includes('edit')) {
+        actionType = 'edit';
         const result: ApiResponse<boolean> = await editDepartment({ id: currentEditId.value, name: dialogFormInput.name });
         if (result?.code === 0 && result?.data) {
           ElMessage.success("Department edited successfully");

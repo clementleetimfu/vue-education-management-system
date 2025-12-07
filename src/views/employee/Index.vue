@@ -3,8 +3,8 @@ import { onMounted, ref, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules, UploadProps } from 'element-plus';
 import type { ApiResponse, PageResult } from '@/api/common';
-import type { SearchEmployeeResponse, SearchEmployeeRequest, WorkExperience, AddEmployeeRequest } from '@/api/emp';
-import { searchEmployee, deleteEmployee, addEmployee } from '@/api/emp';
+import type { SearchEmployeeResponse, SearchEmployeeRequest, WorkExperience, AddEmployeeRequest, FindEmployeeByIdResponse } from '@/api/emp';
+import { searchEmployee, deleteEmployee, addEmployee, findEmployeeById, updateEmployee } from '@/api/emp';
 import { findAllDepartment } from '@/api/dept';
 import type { FindAllDepartmentResponse } from '@/api/dept';
 
@@ -41,7 +41,8 @@ const dialogFormVisible = ref<boolean>(false);
 const dialogFormTitle = ref<string>('');
 const deptData = ref<FindAllDepartmentResponse[]>([]);
 const dialogFormRef = ref<FormInstance | null>(null);
-const dialogFormInput = reactive<AddEmployeeRequest>({
+const dialogFormInput = reactive<AddEmployeeRequest & { id: number | null }>({
+  id: null,
   image: '',
   username: '',
   name: '',
@@ -53,6 +54,7 @@ const dialogFormInput = reactive<AddEmployeeRequest>({
   salary: null,
   workExpList: []
 });
+const token = ref<string>('');
 
 let rules = reactive<FormRules<any>>({
   username: [
@@ -84,6 +86,10 @@ let rules = reactive<FormRules<any>>({
     { required: true, message: 'Hire Date is required', trigger: 'blur' }
   ],
 });
+
+const getToken = () => {
+  token.value = `Bearer ${sessionStorage.getItem('token')}`
+}
 
 const addWorkExpRules = (workExpList: WorkExperience[]) => {
   const workExpRules: FormRules<any> = {};
@@ -187,7 +193,7 @@ const handleAddEmployee = () => {
   dialogFormInput.workExpList = [];
 }
 
-const handleDeleteSelected = async () => {
+const deleteEmp = async () => {
   try {
     const result: ApiResponse<boolean> = await deleteEmployee(selectedIds.value);
     if (result?.code === 0) {
@@ -201,9 +207,48 @@ const handleDeleteSelected = async () => {
   }
 }
 
-const handleEdit = (row: Employee) => {
+const handleDeleteSelected = async () => {
+  try {
+    if (selectedIds.value.length === 0) {
+      ElMessage.warning("Please select at least one employee to delete");
+      return;
+    }
+    ElMessageBox.confirm(
+      `Are you sure you want to delete ${selectedIds.value.length} employee(s)?`,
+      'Warning',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }
+    )
+      .then(async () => {
+        deleteEmp();
+      })
+      .catch(() => {
+        ElMessage.info("Employee deletion canceled");
+      })
+  } catch (error: any) {
+    ElMessage.error("Failed to delete employee");
+  }
+}
+
+const handleEdit = async (id: number) => {
   dialogFormVisible.value = true;
   dialogFormTitle.value = 'Edit Employee';
+  try {
+    const result: ApiResponse<FindEmployeeByIdResponse> = await findEmployeeById(id);
+    if (result?.code === 0 && result?.data) {
+      Object.assign(dialogFormInput, result?.data);
+      result.data.workExpList.forEach((exp: WorkExperience) => {
+        exp.periodArr = [exp.startDate, exp.endDate];
+      });
+    } else {
+      ElMessage.error(result?.message);
+    }
+  } catch (error: any) {
+    ElMessage.error("Failed to find employee by id");
+  }
 }
 
 const handleDelete = async (id: number) => {
@@ -218,7 +263,7 @@ const handleDelete = async (id: number) => {
   )
     .then(async () => {
       selectedIds.value = [id];
-      handleDeleteSelected();
+      deleteEmp();
     })
     .catch(() => {
       ElMessage.info("Employee deletion canceled");
@@ -239,22 +284,36 @@ const handlePageChange = (val: number) => {
   getEmpTableData();
 }
 
-const handleDialogFormSubmit = async () => {
+const handleDialogFormSubmit = async (type: string) => {
   if (!dialogFormRef.value) return;
   addWorkExpRules(dialogFormInput.workExpList);
   dialogFormRef.value.validate(async (valid: boolean) => {
     if (!valid) return;
+    let actionType = type.trim().toLowerCase();
     try {
-      const result: ApiResponse<boolean> = await addEmployee(dialogFormInput);
-      if (result?.code === 0 && result?.data) {
-        dialogFormVisible.value = false;
-        ElMessage.success("Employee saved successfully");
-        getEmpTableData();
-      } else {
-        ElMessage.error(result?.message);
+      if (actionType.includes('add')) {
+        actionType = 'add';
+        const result: ApiResponse<boolean> = await addEmployee(dialogFormInput);
+        if (result?.code === 0 && result?.data) {
+          dialogFormVisible.value = false;
+          ElMessage.success("Employee added successfully");
+          getEmpTableData();
+        } else {
+          ElMessage.error(result?.message);
+        }
+      } else if (actionType.includes("edit")) {
+        actionType = 'edit';
+        const result: ApiResponse<boolean> = await updateEmployee(dialogFormInput);
+        if (result?.code === 0 && result?.data) {
+          dialogFormVisible.value = false;
+          ElMessage.success("Employee updated successfully");
+          getEmpTableData();
+        } else {
+          ElMessage.error(result?.message);
+        }
       }
     } catch (error: any) {
-      ElMessage.error("Failed to save employee");
+      ElMessage.error(`Failed to ${actionType} employee`);
     }
   })
 }
@@ -271,8 +330,6 @@ const handleAddWorkExperience = () => {
 
 const handleDeleteWorkExperience = (index: number) => {
   dialogFormInput.workExpList.splice(index, 1);
-
-  // remove rule
 }
 
 const handleCloseDialogForm = () => {
@@ -290,19 +347,18 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   return true
 }
 
-const handleAvatarSuccess: UploadProps['onSuccess'] = (
-  response,
-  uploadFile
-) => {
-  console.log(response);
-  console.log(uploadFile)
-
-  // imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
+  if (response?.code === 0 && response?.data) {
+    dialogFormInput.image = response?.data;
+  } else {
+    ElMessage.error(response?.message);
+  }
 }
 
 onMounted(() => {
   getEmpTableData();
   getDeptTableData();
+  getToken();
 });
 
 </script>
@@ -316,7 +372,7 @@ onMounted(() => {
     </el-form-item>
 
     <el-form-item label="Gender">
-      <el-select v-model="searchForm.gender" placeholder="Select gender">
+      <el-select v-model="searchForm.gender" placeholder="Select gender" clearable>
         <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label" :value="gender.value" />
       </el-select>
     </el-form-item>
@@ -374,14 +430,14 @@ onMounted(() => {
   <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="55%" @close="handleCloseDialogForm">
     <el-form :model="dialogFormInput" label-width="160px" :rules="rules" ref="dialogFormRef">
 
-      <el-row gutter="20">
-        <el-col span="12">
+      <el-row :gutter="20">
+        <el-col :span="12">
           <el-form-item label="Username" prop="username">
             <el-input class="main-form-input" v-model="dialogFormInput.username"
               placeholder="Enter username (2-50 characters)" />
           </el-form-item>
         </el-col>
-        <el-col span="12">
+        <el-col :span="12">
           <el-form-item label="Name" prop="name">
             <el-input class="main-form-input" v-model="dialogFormInput.name"
               placeholder="Enter name (2-50 characters)" />
@@ -389,8 +445,8 @@ onMounted(() => {
         </el-col>
       </el-row>
 
-      <el-row gutter="20">
-        <el-col span="12">
+      <el-row :gutter="20">
+        <el-col :span="12">
           <el-form-item label="Gender" prop="gender">
             <el-select class="main-form-input" v-model="dialogFormInput.gender" placeholder="Select gender">
               <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label"
@@ -398,15 +454,15 @@ onMounted(() => {
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col span="12">
+        <el-col :span="12">
           <el-form-item label="Phone" prop="phone">
             <el-input class="main-form-input" v-model="dialogFormInput.phone" placeholder="Enter phone number " />
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-row gutter="20">
-        <el-col span="12">
+      <el-row :gutter="20">
+        <el-col :span="12">
           <el-form-item label="Job Title" prop="jobTitle">
             <el-select class="main-form-input" v-model="dialogFormInput.jobTitle" placeholder="Select job title">
               <el-option v-for="jobTitle in jobTitleOptions" :key="jobTitle.value" :label="jobTitle.label"
@@ -414,22 +470,22 @@ onMounted(() => {
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col span="12">
+        <el-col :span="12">
           <el-form-item label="Salary" prop="salary">
             <el-input class="main-form-input" v-model="dialogFormInput.salary" placeholder="Enter salary" />
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-row gutter="20">
-        <el-col span="12">
+      <el-row :gutter="20">
+        <el-col :span="12">
           <el-form-item label="Department" prop="deptId">
             <el-select class="main-form-input" v-model="dialogFormInput.deptId" placeholder="Select department">
               <el-option v-for="dept in deptData" :key="dept.id" :label="dept.name" :value="dept.id" />
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col span="12">
+        <el-col :span="12">
           <el-form-item label="Hire Date" prop="hireDate">
             <el-date-picker v-model="dialogFormInput.hireDate" type="date" value-format="YYYY-MM-DD"
               placeholder="Select hire date" style="width: 300px" />
@@ -438,9 +494,9 @@ onMounted(() => {
       </el-row>
 
       <el-form-item label="Avatar" prop="image">
-        <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false"
-          :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+        <el-upload class="avatar-uploader" action="/api/upload" :headers="{ 'Authorization': token }"
+          :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+          <img v-if="dialogFormInput.image" :src="dialogFormInput.image" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon">
             <Plus />
           </el-icon>
@@ -448,31 +504,31 @@ onMounted(() => {
       </el-form-item>
 
       <el-row>
-        <el-col span="24">
+        <el-col :span="24">
           <el-form-item label="Work Experience">
             <el-button type="success" size="small" @click="handleAddWorkExperience">+ Add Work Experience</el-button>
           </el-form-item>
         </el-col>
       </el-row>
 
-      <el-row v-for="(workExp, index) in dialogFormInput.workExpList" gutter="3">
-        <el-col span="10">
+      <el-row v-for="(workExp, index) in dialogFormInput.workExpList" :gutter="3">
+        <el-col :span="10">
           <el-form-item label="Period" label-width="90px" size="small" :prop="`workExpList.${index}.periodArr`">
             <el-date-picker v-model="workExp.periodArr" type="daterange" range-separator="To"
               start-placeholder="Start date" end-placeholder="End date" value-format="YYYY-MM-DD" size="small" />
           </el-form-item>
         </el-col>
-        <el-col span="6">
+        <el-col :span="6">
           <el-form-item label="Company" label-width="80px" size="small" :prop="`workExpList.${index}.companyName`">
-            <el-input v-model="workExp.companyName" placeholder="Enter companyName name" size="small" />
+            <el-input v-model="workExp.companyName" placeholder="Enter company name" size="small" />
           </el-form-item>
         </el-col>
-        <el-col span="6">
+        <el-col :span="6">
           <el-form-item label="Job Title" label-width="80px" size="small" :prop="`workExpList.${index}.jobTitle`">
             <el-input v-model="workExp.jobTitle" placeholder="Enter job title" size="small" />
           </el-form-item>
         </el-col>
-        <el-col span="2">
+        <el-col :span="2">
           <el-button type="danger" size="small" @click="handleDeleteWorkExperience(index)"
             style="margin-left: 5px;">Delete</el-button>
         </el-col>
@@ -482,8 +538,8 @@ onMounted(() => {
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleDialogFormSubmit">
-          Save
+        <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
+          Confirm
         </el-button>
       </div>
     </template>
@@ -513,6 +569,11 @@ onMounted(() => {
 
 .main-form-input {
   width: 300px;
+}
+
+.avatar-uploader .avatar {
+  width: 78px;
+  height: 78px;
 }
 
 .avatar-uploader .el-upload {
