@@ -153,7 +153,7 @@ onMounted(() => {
   <h1>Employee Dashboard</h1>
 
   <div id="container">
-    <el-row gutter="20">
+    <el-row :gutter="20">
       <el-col :span="12">
         <div class="dashboard-container" id="empJobTitleCountChart"></div>
       </el-col>

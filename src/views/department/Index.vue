@@ -143,7 +143,7 @@ const handleDialogFormSubmit = async (type: string) => {
   <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
     <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules">
       <el-form-item label="Department Name" label-width="150px" prop="name">
-        <el-input v-model="dialogFormInput.name" />
+        <el-input v-model="dialogFormInput.name" placeholder="Enter department name" />
       </el-form-item>
     </el-form>
     <template #footer>

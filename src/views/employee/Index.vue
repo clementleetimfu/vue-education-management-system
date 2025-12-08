@@ -5,6 +5,9 @@ import type { FormInstance, FormRules, UploadProps } from 'element-plus';
 import type { ApiResponse, PageResult } from '@/api/common';
 import type { SearchEmployeeResponse, SearchEmployeeRequest, WorkExperience, AddEmployeeRequest, FindEmployeeByIdResponse } from '@/api/emp';
 import { searchEmployee, deleteEmployee, addEmployee, findEmployeeById, updateEmployee } from '@/api/emp';
+import type { JobTitleFindAllResponse } from '@/api/jobs';
+import { findAllJobTitle } from '@/api/jobs';
+
 import { findAllDepartment } from '@/api/dept';
 import type { FindAllDepartmentResponse } from '@/api/dept';
 
@@ -55,6 +58,7 @@ const dialogFormInput = reactive<AddEmployeeRequest & { id: number | null }>({
   workExpList: []
 });
 const token = ref<string>('');
+const jobTitleOptions = ref<{ label: string; value: number }[]>([]);
 
 let rules = reactive<FormRules<any>>({
   username: [
@@ -118,14 +122,21 @@ const genderOptions = reactive([
   }
 ])
 
-const jobTitleOptions = reactive([
-  { label: 'Student Affairs Coordinator', value: 1 },
-  { label: 'Curriculum Specialist', value: 2 },
-  { label: 'Academic Advisor', value: 3 },
-  { label: 'Career Counselor', value: 4 },
-  { label: 'HR Manager', value: 5 },
-  { label: 'Administrative Officer', value: 6 }
-])
+const getJobTitleOptions = async () => {
+  try {
+    const result: ApiResponse<JobTitleFindAllResponse[]> = await findAllJobTitle();
+    if (result?.code === 0) {
+      jobTitleOptions.value = result?.data?.map((job: JobTitleFindAllResponse) => ({
+        label: job.name,
+        value: job.id
+      }));
+    } else {
+      ElMessage.error(result?.message);
+    }
+  } catch (error: any) {
+    ElMessage.error("Failed to find all job titles");
+  }
+}
 
 watch(() => searchForm.hireDateArr, (newVal: string[]) => {
   if (newVal && newVal.length === 2) {
@@ -158,10 +169,10 @@ const getDeptTableData = async () => {
 
 const getEmpTableData = async () => {
   try {
-    searchEmployeeRequest.name = searchForm.name || '';
-    searchEmployeeRequest.gender = searchForm.gender || '';
-    searchEmployeeRequest.startDate = searchForm.startDate || '';
-    searchEmployeeRequest.endDate = searchForm.endDate || '';
+    searchEmployeeRequest.name = searchForm.name;
+    searchEmployeeRequest.gender = searchForm.gender;
+    searchEmployeeRequest.startDate = searchForm.startDate;
+    searchEmployeeRequest.endDate = searchForm.endDate;
     const result: ApiResponse<PageResult<SearchEmployeeResponse>> = await searchEmployee(searchEmployeeRequest);
     if (result?.code === 0) {
       empTableDate.value = result?.data?.rows;
@@ -358,6 +369,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
 onMounted(() => {
   getEmpTableData();
   getDeptTableData();
+  getJobTitleOptions();
   getToken();
 });
 
@@ -379,7 +391,7 @@ onMounted(() => {
 
     <el-form-item label="Hire Date">
       <el-date-picker v-model="searchForm.hireDateArr" type="daterange" range-separator="To"
-        start-placeholder="Start date" end-placeholder="End date" value-format="YYYY-MM-DD" />
+        start-placeholder="Pick start date" end-placeholder="Pick end date" value-format="YYYY-MM-DD" />
     </el-form-item>
 
     <el-form-item>

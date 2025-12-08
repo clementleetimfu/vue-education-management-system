@@ -59,7 +59,12 @@ interface UpdateEmployeeRequest extends AddEmployeeRequest {
   id: number | null;
 }
 
-export const searchEmployee = (params: any): Promise<ApiResponse<PageResult<SearchEmployeeResponse>>> => request.get('/emps/search', { params });
+export interface ClassTeacherResponse {
+  name: string;
+  id: number;
+}
+
+export const searchEmployee = (params: SearchEmployeeRequest): Promise<ApiResponse<PageResult<SearchEmployeeResponse>>> => request.get('/emps/search', { params });
 
 export const deleteEmployee = (ids: number[]): Promise<ApiResponse<boolean>> => request.delete(`/emps?ids=${ids.join(',')}`);
 
@@ -68,3 +73,5 @@ export const addEmployee = (data: AddEmployeeRequest): Promise<ApiResponse<boole
 export const findEmployeeById = (id: number): Promise<ApiResponse<FindEmployeeByIdResponse>> => request.get(`/emps/${id}`);
 
 export const updateEmployee = (data: UpdateEmployeeRequest): Promise<ApiResponse<boolean>> => request.put('/emps', data);
+
+export const findAllClassTeacher = (): Promise<ApiResponse<ClassTeacherResponse[]>> => request.get('/emps/teachers');
