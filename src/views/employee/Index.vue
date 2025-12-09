@@ -406,11 +406,7 @@ onMounted(() => {
   <el-table :data="empTableDate" border style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55" align="center" />
     <el-table-column prop="name" label="Name" align="center" />
-    <el-table-column prop="gender" label="Gender" align="center">
-      <template #default="{ row }">
-        {{genderOptions.find(option => option.value === row.gender)?.label}}
-      </template>
-    </el-table-column>
+    <el-table-column prop="gender" label="Gender" align="center" />
     <el-table-column prop="image" label="Avatar" align="center">
       <template #default="{ row }">
         <el-image v-if="row.image" :src="row.image" fit="fill" style="height: 50px;" />
@@ -418,11 +414,7 @@ onMounted(() => {
       </template>
     </el-table-column>
     <el-table-column prop="deptName" label="Department" align="center" />
-    <el-table-column prop="jobTitle" label="Job Title" align="center">
-      <template #default="{ row }">
-        {{jobTitleOptions.find(option => option.value === row.jobTitle)?.label}}
-      </template>
-    </el-table-column>
+    <el-table-column prop="jobTitle" label="Job Title" align="center" />
     <el-table-column prop="hireDate" label="Hire Date" align="center" />
     <el-table-column prop="updateTime" label="Last Updated" align="center" />
     <el-table-column fixed="right" label="Operations" min-width="120" align="center">

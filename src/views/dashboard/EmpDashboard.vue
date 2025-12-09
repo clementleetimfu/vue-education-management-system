@@ -134,7 +134,17 @@ const initEmpGenderCountChart = () => {
           value: item.count,
           name: item.gender,
           itemStyle: {
-            color: item.gender === 'Male' ? '#1890ff' : item.gender === 'Female' ? '#ff99cc' : undefined
+            color: item.gender === 'Male'
+              ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                { offset: 0, color: '#4da6ff' },
+                { offset: 1, color: '#0050b3' }
+              ])
+              : item.gender === 'Female'
+                ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                  { offset: 0, color: '#ffb3d9' },
+                  { offset: 1, color: '#ff66b3' }
+                ])
+                : undefined
           }
         }))
       }

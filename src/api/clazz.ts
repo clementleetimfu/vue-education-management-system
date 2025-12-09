@@ -39,6 +39,11 @@ interface UpdateClazzRequest extends AddClazzRequest {
   id: number | null;
 }
 
+export interface ClazzFindAllResponse {
+  id: number;
+  name: string;
+}
+
 export const searchClazz = (params: SearchClazzRequest): Promise<ApiResponse<PageResult<SearchClazzResponse>>> => request.get('/clazz/search', { params });
 
 export const addClazz = (data: AddClazzRequest): Promise<ApiResponse<boolean>> => request.post('/clazz', data);
@@ -48,3 +53,5 @@ export const findClazzById = (id: number): Promise<ApiResponse<FindClazzByIdResp
 export const updateClazz = (data: UpdateClazzRequest): Promise<ApiResponse<boolean>> => request.put('clazz', data);
 
 export const deleteClazz = (id: number): Promise<ApiResponse<boolean>> => request.delete(`/clazz/${id}`);
+
+export const findAllClazz = (): Promise<ApiResponse<ClazzFindAllResponse[]>> => request.get('/clazz');
