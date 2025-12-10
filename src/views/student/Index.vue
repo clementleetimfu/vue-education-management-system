@@ -8,13 +8,13 @@ import { onMounted, reactive, ref } from 'vue'
 
 interface SearchForm {
   name: string;
-  highestEducation: number | null;
+  educationLevel: number | null;
   clazzId: number | null;
 }
 
 const searchForm = reactive<SearchForm>({
   name: '',
-  highestEducation: null,
+  educationLevel: null,
   clazzId: null
 })
 
@@ -48,8 +48,8 @@ const rules = reactive({
   address: [
     { required: true, message: 'Please input student address', trigger: ['blur'] }
   ],
-  highestEducation: [
-    { required: true, message: 'Please select student highest education', trigger: ['change'] }
+  educationLevel: [
+    { required: true, message: 'Please select student education level', trigger: ['change'] }
   ],
 
   clazzId: [
@@ -62,14 +62,14 @@ const rules = reactive({
 
 const clazzOptions = ref<{ label: string; value: number }[]>([]);
 const educationOptions = ref<{ label: string; value: number }[]>([]);
-const pageSizes = ref<number[]>([10, 20, 30, 40]);
+const pageSizes = ref<number[]>([10, 20, 25, 50, 100]);
 const total = ref<number>(0);
 const studentTableData = ref<SearchStudentResponse[]>([]);
 const searchStudentRequest = reactive<SearchStudentRequest>({
   page: 1,
   pageSize: 10,
   name: '',
-  highestEducation: null,
+  educationLevel: null,
   clazzId: null
 })
 const dialogFormVisible = ref<boolean>(false);
@@ -83,7 +83,7 @@ const dialogFormInput = reactive<AddStudentRequest & { id: number | null }>({
   phone: '',
   email: '',
   address: '',
-  highestEducation: null,
+  educationLevel: null,
   graduationDate: '',
   clazzId: null,
   intakeDate: ''
@@ -93,14 +93,15 @@ const selectedIds = ref<number[]>([]);
 const getStudentTableData = async () => {
   try {
     searchStudentRequest.name = searchForm.name;
-    searchStudentRequest.highestEducation = searchForm.highestEducation;
+    searchStudentRequest.educationLevel = searchForm.educationLevel;
     searchStudentRequest.clazzId = searchForm.clazzId;
     const result: ApiResponse<PageResult<SearchStudentResponse>> = await searchStudent(searchStudentRequest);
     if (result?.code === 0) {
       studentTableData.value = result?.data?.rows;
       total.value = result?.data?.total;
     } else {
-      ElMessage.error(result?.message);
+      studentTableData.value = [];
+      total.value = 0;
     }
   } catch (error: any) {
     ElMessage.error("Failed to search student");
@@ -141,6 +142,17 @@ const getClazzOptions = async () => {
 const handleAddStudent = () => {
   dialogFormTitle.value = 'Add Student';
   dialogFormVisible.value = true;
+  dialogFormInput.id = null;
+  dialogFormInput.name = '';
+  dialogFormInput.gender = null;
+  dialogFormInput.birthdate = '';
+  dialogFormInput.phone = '';
+  dialogFormInput.email = '';
+  dialogFormInput.address = '';
+  dialogFormInput.educationLevel = null;
+  dialogFormInput.graduationDate = '';
+  dialogFormInput.clazzId = null;
+  dialogFormInput.intakeDate = '';
 }
 
 const delStudent = async () => {
@@ -189,7 +201,7 @@ const handleSearch = () => {
 
 const handleClear = () => {
   searchForm.name = ''
-  searchForm.highestEducation = null
+  searchForm.educationLevel = null
   searchForm.clazzId = null
   getStudentTableData();
 }
@@ -296,7 +308,7 @@ onMounted(() => {
     </el-form-item>
 
     <el-form-item label="Education Level">
-      <el-select v-model="searchForm.highestEducation" placeholder="Select highest education level" clearable
+      <el-select v-model="searchForm.educationLevel" placeholder="Select education level" clearable
         style="width: 300px;">
         <el-option v-for="edu in educationOptions" :key="edu.value" :label="edu.label" :value="edu.value" />
       </el-select>
@@ -322,7 +334,7 @@ onMounted(() => {
     <el-table-column prop="name" label="Name" align="center" />
     <el-table-column prop="no" label="No" align="center" />
     <el-table-column prop="gender" label="Gender" align="center" />
-    <el-table-column prop="highestEducation" label="Highest Education" align="center" />
+    <el-table-column prop="educationLevel" label="Education Level" align="center" />
     <el-table-column prop="clazzName" width="400" label="Class" align="center" />
     <el-table-column prop="intakeDate" label="Intake Date" align="center" />
     <el-table-column prop="updateTime" label="Last Updated" align="center" />
@@ -388,8 +400,8 @@ onMounted(() => {
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="Highest Education" prop="highestEducation">
-            <el-select v-model="dialogFormInput.highestEducation" placeholder="Select highest education">
+          <el-form-item label="Education Level" prop="educationLevel">
+            <el-select v-model="dialogFormInput.educationLevel" placeholder="Select education level">
               <el-option v-for="edu in educationOptions" :key="edu.value" :label="edu.label" :value="edu.value" />
             </el-select>
           </el-form-item>
@@ -411,7 +423,7 @@ onMounted(() => {
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Intake Date" prop="intakeDate">
+          <el-form-item v-if="dialogFormTitle === 'Add Student'" label="Intake Date" prop="intakeDate">
             <el-date-picker v-model="dialogFormInput.intakeDate" type="date" value-format="YYYY-MM-DD"
               placeholder="Select intake date" style="width: 350px" />
           </el-form-item>

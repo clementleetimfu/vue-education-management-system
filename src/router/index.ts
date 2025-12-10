@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/login/Index.vue'
 import EmpDashboard from '@/views/dashboard/EmpDashboard.vue'
-import ClazzStudDashboard from '@/views/dashboard/ClazzStudDashboard.vue'
+import StudentDashboard from '@/views/dashboard/StudentDashboard.vue'
 import DepartmentView from '@/views/department/Index.vue'
 import EmployeeView from '@/views/employee/Index.vue'
 import LogView from '@/views/log/Index.vue'
@@ -25,9 +25,9 @@ const router = createRouter({
           meta: { requiresAuth: true } 
         },
         {
-          path: 'dash-clazz-stud',
-          name: 'dash-clazz-stud',
-          component: ClazzStudDashboard,
+          path: 'dash-student',
+          name: 'dash-student',
+          component: StudentDashboard,
           meta: { requiresAuth: true }
         },
         {

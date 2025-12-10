@@ -20,7 +20,8 @@ const getLogTableData = async () => {
       logTableData.value = result?.data?.rows;
       total.value = result?.data?.total;
     } else {
-      ElMessage.error(result?.message);
+      logTableData.value = [];
+      total.value = 0;
     }
   } catch (error: any) {
     ElMessage.error("Failed to find activity log");

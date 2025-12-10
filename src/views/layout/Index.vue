@@ -67,7 +67,7 @@ const handleLogout = () => {
                 <span>Dashboard</span>
               </template>
               <el-menu-item index="/dash-emp">Employee</el-menu-item>
-              <el-menu-item index="/dash-clazz-stud">Class & Student</el-menu-item>
+              <el-menu-item index="/dash-student">Student</el-menu-item>
             </el-sub-menu>
 
             <el-sub-menu index="/org">

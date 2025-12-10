@@ -128,7 +128,7 @@ const getClazzTableData = async () => {
       clazzTableData.value = result?.data?.rows;
       total.value = result?.data?.total;
     } else {
-      ElMessage.error(result?.message);
+      clazzTableData.value = [];
     }
   } catch (error: any) {
     ElMessage.error("Failed to search class");

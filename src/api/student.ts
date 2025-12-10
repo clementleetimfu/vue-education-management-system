@@ -5,7 +5,7 @@ export interface SearchStudentRequest {
   page: number;
   pageSize: number;
   name: string;
-  highestEducation: number | null;
+  educationLevel: number | null;
   clazzId: number | null;
 }
 
@@ -14,7 +14,7 @@ export interface SearchStudentResponse {
   name: string;
   no: string
   gender: string;
-  highestEducation: string;
+  educationLevel: string;
   clazzName: string;
   intakeDate: string;
   updateTime: string;
@@ -27,7 +27,7 @@ export interface AddStudentRequest {
   phone: string;
   email: string;
   address: string;
-  highestEducation: number | null;
+  educationLevel: number | null;
   graduationDate: string;
   clazzId: number | null;
   intakeDate: string;
@@ -41,7 +41,7 @@ export interface FindStudentByIdResponse {
   phone: string;
   email: string;
   address: string;
-  highestEducation: number | null;
+  educationLevel: number | null;
   clazzId: number | null;
   intakeDate: string;
 }

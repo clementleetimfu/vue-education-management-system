@@ -1,52 +1,49 @@
 <script setup lang="ts">
 import type { ApiResponse } from '@/api/common';
-import { findEmpJobTitleCount, findEmpGenderCount } from '@/api/empDash';
-import type { EmpJobTitleCountResponse, EmpGenderCountResponse } from '@/api/empDash';
 import { ElMessage } from 'element-plus';
 import { onMounted, reactive, ref } from 'vue';
 import * as echarts from 'echarts';
+import { findStudentCountByClazz, findStudentEduLevelCount, type StudentCountByClazzResponse, type StudentEduLevelCountResponse } from '@/api/studentDash';
 
-const empJobTitleCountData = reactive<EmpJobTitleCountResponse>({
-  jobTitleList: [],
-  jobTitleCountList: [],
+const studentCountByClazzData = reactive<StudentCountByClazzResponse>({
+  clazzNameList: [],
+  studentCountList: [],
 });
 
-const empGenderCountData = ref<EmpGenderCountResponse[]>([]);
+const studentEduLevelCountData = ref<StudentEduLevelCountResponse[]>([]);
 
-const getEmpJobTitleCount = async () => {
+const getStudentCountByClazz = async () => {
   try {
-    const result: ApiResponse<EmpJobTitleCountResponse> = await findEmpJobTitleCount();
+    const result: ApiResponse<StudentCountByClazzResponse> = await findStudentCountByClazz();
     if (result?.code === 0 && result?.data) {
-      empJobTitleCountData.jobTitleList = result?.data?.jobTitleList;
-      empJobTitleCountData.jobTitleCountList = result?.data?.jobTitleCountList;
+      studentCountByClazzData.clazzNameList = result?.data?.clazzNameList;
+      studentCountByClazzData.studentCountList = result?.data?.studentCountList;
+      initStudentCountByClazzChart();
     } else {
       ElMessage.error(result?.message);
     }
   } catch (error: any) {
-    ElMessage.error("Failed to get employee job title count");
-  } finally {
-    initEmpJobTitleCountChart();
+    ElMessage.error("Failed to get student count by clazz");
   }
 }
 
-const getEmpGenderCount = async () => {
+const getStudentEduLevelCount = async () => {
   try {
-    const result: ApiResponse<EmpGenderCountResponse[]> = await findEmpGenderCount();
+    const result: ApiResponse<StudentEduLevelCountResponse[]> = await findStudentEduLevelCount();
     if (result?.code === 0 && result?.data) {
-      empGenderCountData.value = result?.data;
+      studentEduLevelCountData.value = result?.data;
+      initStudentEduLevelCountChart();
     } else {
       ElMessage.error(result?.message);
     }
   } catch (error: any) {
-    ElMessage.error("Failed to get employee gender count");
-  } finally {
-    initEmpGenderCountChart();
+    ElMessage.error("Failed to get student education level count");
   }
 }
 
-const initEmpJobTitleCountChart = () => {
+const initStudentCountByClazzChart = () => {
   type EChartsOption = echarts.EChartsOption;
-  var chartDom = document.getElementById('empJobTitleCountChart')!;
+  var chartDom = document.getElementById('studentCountByClazzChart')!;
   var myChart = echarts.init(chartDom);
   var option: EChartsOption;
 
@@ -66,7 +63,7 @@ const initEmpJobTitleCountChart = () => {
     xAxis: [
       {
         type: 'category',
-        data: empJobTitleCountData.jobTitleList,
+        data: studentCountByClazzData.clazzNameList,
         axisTick: {
           alignWithLabel: true
         },
@@ -85,7 +82,7 @@ const initEmpJobTitleCountChart = () => {
         name: 'Count',
         type: 'bar',
         barWidth: '60%',
-        data: empJobTitleCountData.jobTitleCountList,
+        data: studentCountByClazzData.studentCountList,
         itemStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
             { offset: 0, color: '#1890ff' },
@@ -98,30 +95,11 @@ const initEmpJobTitleCountChart = () => {
   option && myChart.setOption(option);
 }
 
-const initEmpGenderCountChart = () => {
+const initStudentEduLevelCountChart = () => {
   type EChartsOption = echarts.EChartsOption;
-  var chartDom = document.getElementById('empGenderCountChart')!;
+  var chartDom = document.getElementById('studentEduLevelCountChart')!;
   var myChart = echarts.init(chartDom);
   var option: EChartsOption;
-
-  const data = empGenderCountData.value.length > 0 ?
-    empGenderCountData.value.map((item) => ({
-      value: item.count,
-      name: item.gender,
-      itemStyle: {
-        color: item.gender === 'Male'
-          ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#4da6ff' },
-            { offset: 1, color: '#0050b3' }
-          ])
-          : item.gender === 'Female'
-            ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-              { offset: 0, color: '#ffb3d9' },
-              { offset: 1, color: '#ff66b3' }
-            ])
-            : undefined
-      }
-    })) : [{ value: 0, name: 'No Data' }]
 
   option = {
     tooltip: {
@@ -151,7 +129,10 @@ const initEmpGenderCountChart = () => {
         labelLine: {
           show: false
         },
-        data: data
+        data: studentEduLevelCountData.value.map((item) => ({
+          value: item.count,
+          name: item.educationLevel,
+        }))
       }
     ]
   };
@@ -159,21 +140,21 @@ const initEmpGenderCountChart = () => {
 }
 
 onMounted(() => {
-  getEmpJobTitleCount();
-  getEmpGenderCount();
+  getStudentCountByClazz();
+  getStudentEduLevelCount();
 })
 
 </script>
 <template>
-  <h1>Employee Dashboard</h1>
+  <h1>Student Dashboard</h1>
 
   <div id="container">
     <el-row :gutter="20">
       <el-col :span="12">
-        <div class="dashboard-container" id="empJobTitleCountChart"></div>
+        <div class="dashboard-container" id="studentCountByClazzChart"></div>
       </el-col>
       <el-col :span="12">
-        <div class="dashboard-container" id="empGenderCountChart"></div>
+        <div class="dashboard-container" id="studentEduLevelCountChart"></div>
       </el-col>
     </el-row>
   </div>

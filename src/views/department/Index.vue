@@ -34,7 +34,7 @@ const getDeptTableData = async () => {
     if (result?.code === 0) {
       deptTableData.value = result?.data;
     } else {
-      ElMessage.error(result?.message);
+      deptTableData.value = [];
     }
   } catch (error: any) {
     ElMessage.error("Failed to find all departments");
