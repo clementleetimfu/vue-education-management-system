@@ -154,7 +154,7 @@ watch(() => dialogFormInput.workExpList, (newVal: WorkExperience[]) => {
   });
 }, { deep: true });
 
-const getDeptTableData = async () => {
+const getDeptData = async () => {
   try {
     const result: ApiResponse<FindAllDepartmentResponse[]> = await findAllDepartment();
     if (result?.code === 0) {
@@ -369,7 +369,7 @@ const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
 
 onMounted(() => {
   getEmpTableData();
-  getDeptTableData();
+  getDeptData();
   getJobTitleOptions();
   getToken();
 });
