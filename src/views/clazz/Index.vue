@@ -86,13 +86,14 @@ const getTeacherOptions = async () => {
 
 const rules = reactive({
   name: [
-    { required: true, message: 'Please enter class name', trigger: ['blur'] }
+    { required: true, message: 'Please enter class name', trigger: ['blur'] },
+    { min: 2, max: 50, message: 'Class name length must be between 2 and 50 characters', trigger: 'blur' }
   ],
   startDate: [
-    { required: true, message: 'Please pick start date', trigger: ['change'] }
+    { required: true, message: 'Please select start date', trigger: ['change'] }
   ],
   endDate: [
-    { required: true, message: 'Please pick end date', trigger: ['change'] },
+    { required: true, message: 'Please select end date', trigger: ['change'] },
     {
       validator: async (_: any, value: string) => {
 
@@ -263,7 +264,7 @@ onMounted(() => {
 
     <el-form-item label="Class End Date">
       <el-date-picker v-model="searchForm.clazzEndDateArr" type="daterange" range-separator="To"
-        start-placeholder="Start date" end-placeholder="End date" value-format="YYYY-MM-DD" />
+        start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
     </el-form-item>
 
     <el-form-item>
@@ -305,11 +306,11 @@ onMounted(() => {
         <el-input v-model="dialogFormInput.name" placeholder="Enter class name" />
       </el-form-item>
       <el-form-item label="Class Start Date" prop="startDate">
-        <el-date-picker v-model="dialogFormInput.startDate" type="date" placeholder="Pick start date"
+        <el-date-picker v-model="dialogFormInput.startDate" type="date" placeholder="Select start date"
           value-format="YYYY-MM-DD" style="width: 500px;" />
       </el-form-item>
       <el-form-item label="Class End Date" prop="endDate">
-        <el-date-picker v-model="dialogFormInput.endDate" type="date" placeholder="Pick end date"
+        <el-date-picker v-model="dialogFormInput.endDate" type="date" placeholder="Select end date"
           value-format="YYYY-MM-DD" style="width: 500px;" />
       </el-form-item>
       <el-form-item label="Class Teacher" prop="teacherId">

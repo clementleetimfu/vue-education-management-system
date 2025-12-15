@@ -31,7 +31,8 @@ const genderOptions = reactive([
 
 const rules = reactive({
   name: [
-    { required: true, message: 'Please input student name', trigger: ['blur'] }
+    { required: true, message: 'Please input student name', trigger: ['blur'] },
+    { min: 2, max: 50, message: 'Student name length must be between 2 and 50 characters', trigger: 'blur' }
   ],
   gender: [
     { required: true, message: 'Please select student gender', trigger: ['change'] }
@@ -40,13 +41,24 @@ const rules = reactive({
     { required: true, message: 'Please input student birth date', trigger: ['blur'] }
   ],
   phone: [
-    { required: true, message: 'Please input student phone number', trigger: ['blur'] }
+    { required: true, message: 'Please input student phone number', trigger: ['blur'] },
+    { pattern: /^\d{10,15}$/, message: 'Phone number must be 10-15 digits', trigger: 'blur' }
   ],
   email: [
-    { required: true, message: 'Please input student email', trigger: ['blur'] }
+    { required: true, message: 'Please input student email', trigger: ['blur'] },
+    {
+      pattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+      message: 'Please enter a valid email address',
+      trigger: ['blur']
+    }
   ],
   address: [
-    { required: true, message: 'Please input student address', trigger: ['blur'] }
+    { required: true, message: 'Please input student address', trigger: ['blur'] },
+    {
+      max: 100,
+      message: 'Address is too long',
+      trigger: ['blur', 'input']
+    }
   ],
   educationLevel: [
     { required: true, message: 'Please select student education level', trigger: ['change'] }

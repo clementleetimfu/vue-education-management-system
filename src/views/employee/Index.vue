@@ -392,7 +392,7 @@ onMounted(() => {
 
     <el-form-item label="Hire Date">
       <el-date-picker v-model="searchForm.hireDateArr" type="daterange" range-separator="To"
-        start-placeholder="Pick start date" end-placeholder="Pick end date" value-format="YYYY-MM-DD" />
+        start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
     </el-form-item>
 
     <el-form-item>
