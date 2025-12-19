@@ -57,49 +57,52 @@ const handleLogout = () => {
       <el-container>
         <el-aside class="aside" width="200px">
 
-          <el-menu router active-text-color="#4FC3F7" background-color="#162640" default-active="1" text-color="#fff">
+          <el-scrollbar class="aside-scroll">
+            <el-menu router active-text-color="#4FC3F7" background-color="#162640" default-active="1" text-color="#fff">
 
-            <el-sub-menu index="/dashboard">
-              <template #title>
+              <el-sub-menu index="/dashboard">
+                <template #title>
+                  <el-icon>
+                    <DataAnalysis />
+                  </el-icon>
+                  <span>Dashboard</span>
+                </template>
+                <el-menu-item index="/dash-emp">Employee</el-menu-item>
+                <el-menu-item index="/dash-student">Student</el-menu-item>
+              </el-sub-menu>
+
+              <el-sub-menu index="/org">
+                <template #title>
+                  <el-icon>
+                    <OfficeBuilding />
+                  </el-icon>
+                  <span>Organization</span>
+                </template>
+                <el-menu-item index="/dept">Department</el-menu-item>
+                <el-menu-item index="/emp">Employee</el-menu-item>
+              </el-sub-menu>
+
+              <el-sub-menu index="/academic">
+                <template #title>
+                  <el-icon>
+                    <School />
+                  </el-icon>
+                  <span>Academic</span>
+                </template>
+                <el-menu-item index="/clazz">Class</el-menu-item>
+                <el-menu-item index="/stud">Student</el-menu-item>
+              </el-sub-menu>
+
+              <el-menu-item index="/log">
                 <el-icon>
-                  <DataAnalysis />
+                  <Notebook />
                 </el-icon>
-                <span>Dashboard</span>
-              </template>
-              <el-menu-item index="/dash-emp">Employee</el-menu-item>
-              <el-menu-item index="/dash-student">Student</el-menu-item>
-            </el-sub-menu>
+                <span>Log</span>
+              </el-menu-item>
 
-            <el-sub-menu index="/org">
-              <template #title>
-                <el-icon>
-                  <OfficeBuilding />
-                </el-icon>
-                <span>Organization</span>
-              </template>
-              <el-menu-item index="/dept">Department</el-menu-item>
-              <el-menu-item index="/emp">Employee</el-menu-item>
-            </el-sub-menu>
+            </el-menu>
+          </el-scrollbar>
 
-            <el-sub-menu index="/academic">
-              <template #title>
-                <el-icon>
-                  <School />
-                </el-icon>
-                <span>Academic</span>
-              </template>
-              <el-menu-item index="/clazz">Class</el-menu-item>
-              <el-menu-item index="/stud">Student</el-menu-item>
-            </el-sub-menu>
-
-            <el-menu-item index="/log">
-              <el-icon>
-                <Notebook />
-              </el-icon>
-              <span>Log</span>
-            </el-menu-item>
-
-          </el-menu>
         </el-aside>
 
         <el-main class="main">
@@ -153,5 +156,9 @@ const handleLogout = () => {
 .aside {
   height: 100%;
   background-color: #162640;
+}
+
+:deep(.el-menu) {
+  border-right: none;
 }
 </style>
