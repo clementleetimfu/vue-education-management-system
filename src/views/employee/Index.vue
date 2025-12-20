@@ -54,7 +54,7 @@ const dialogFormInput = reactive<AddEmployeeRequest & { id: number | null }>({
   hireDate: '',
   deptId: null,
   phone: '',
-  salary: null,
+  salary:'',
   workExpList: []
 });
 const token = ref<string>('');

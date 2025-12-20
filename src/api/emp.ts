@@ -38,7 +38,7 @@ export interface AddEmployeeRequest {
   hireDate: string;
   deptId: number | null;
   phone: string;
-  salary: number | null;
+  salary: string;
   workExpList: WorkExperience[];
 }
 
@@ -48,7 +48,7 @@ export interface FindEmployeeByIdResponse {
   name: string;
   gender: number | null;
   jobTitle: number | null;
-  salary: number | null;
+  salary: string;
   image: string;
   hireDate: string;
   deptId: number | null;
