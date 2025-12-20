@@ -2,6 +2,9 @@
 
 A modern web application for education management built with Vue 3, TypeScript, and Element Plus UI framework.
 
+**Backend Repository:** [Java Backend](https://github.com/clementleetimfu/java-education-management-system)
+
+
 ![Vue.js](https://img.shields.io/badge/Vue.js-3.x-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
 ![Element Plus](https://img.shields.io/badge/Element_Plus-2.x-blue)
