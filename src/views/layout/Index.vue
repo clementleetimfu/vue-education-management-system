@@ -1,10 +1,72 @@
 <script setup lang="ts">
+import { updatePassword, type UpdatePasswordRequest } from '@/api/auth';
+import type { ApiResponse } from '@/api/common';
 import { useEmployeeStore } from '@/stores/emp';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const empStore = useEmployeeStore();
+const dialogFormVisible = ref<boolean>(false);
+const dialogFormTitle = ref<string>('Set your new password');
+const dialogFormRef = ref<FormInstance | null>(null);
+const dialogFormInput = reactive<UpdatePasswordRequest & { confirmPassword: string }>({
+  id: null,
+  password: '',
+  confirmPassword: '',
+});
+
+const rules = reactive({
+  password: [
+    { required: true, message: 'Password is required', trigger: 'blur' },
+    { min: 10, message: 'Password length at least 10 characters', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: 'Confirm password is required', trigger: 'blur' },
+    {
+      validator: async (_: any, value: string) => {
+
+        const password = dialogFormInput.password;
+        if (value !== password) {
+          throw new Error('Passwords do not match');
+        }
+      },
+      trigger: "change"
+    }
+  ]
+});
+
+const handleCloseDialogForm = (): void => {
+  dialogFormVisible.value = false;
+  dialogFormRef?.value?.resetFields();
+}
+
+const handleDialogFormSubmit = async () => {
+  if (!dialogFormRef.value) return;
+  dialogFormRef.value.validate(async (valid: boolean) => {
+    if (!valid) return;
+    try {
+      dialogFormInput.id = empStore.id;
+      const { confirmPassword, ...rest } = dialogFormInput;
+      const result: ApiResponse<boolean> = await updatePassword(rest);
+      if (result?.code === 0 && result?.data) {
+        dialogFormVisible.value = false;
+        ElMessage.success("Password updated successfully");
+      } else {
+        ElMessage.error(result?.message);
+      }
+    } catch (error: any) {
+      ElMessage.error(`Failed to update employee password`);
+    }
+  })
+}
+
+const handleChangePassword = () => {
+  dialogFormVisible.value = true;
+  dialogFormInput.confirmPassword = '';
+  dialogFormInput.password = '';
+}
 
 const handleLogout = () => {
   ElMessageBox.confirm(
@@ -44,13 +106,25 @@ const handleLogout = () => {
                 <Management />
               </el-icon>Education Management System</el-text>
           </el-col>
+
           <el-col :span="4" class="header-right">
-            <el-text class="header-username"><el-icon>
-                <Avatar />
-              </el-icon>&nbsp;{{ empStore.username }}</el-text>
-            <el-button link @click="handleLogout" class="header-logout-button" color="#162640"><el-icon>
-                <SwitchButton />
-              </el-icon>&nbsp;Logout</el-button>
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                <el-text class="header-username"><el-icon>
+                    <Avatar />
+                  </el-icon>&nbsp;&nbsp;{{ empStore.username }}</el-text>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="handleChangePassword"><el-icon>
+                      <Lock />
+                    </el-icon>&nbsp;Change Password</el-dropdown-item>
+                  <el-dropdown-item @click="handleLogout"><el-icon>
+                      <SwitchButton />
+                    </el-icon>&nbsp;Logout</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </el-col>
         </el-row>
       </el-header>
@@ -112,6 +186,25 @@ const handleLogout = () => {
       </el-container>
     </el-container>
   </div>
+
+  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
+    <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules">
+      <el-form-item label="New Password" label-width="150px" prop="password">
+        <el-input v-model="dialogFormInput.password" type="password" />
+      </el-form-item>
+      <el-form-item label="Confirm Password" label-width="150px" prop="confirmPassword">
+        <el-input v-model="dialogFormInput.confirmPassword" type="password" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="handleDialogFormSubmit">
+          Confirm
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -141,10 +234,6 @@ const handleLogout = () => {
   margin-right: 20px;
 }
 
-.header-logout-button {
-  font-size: 15px;
-}
-
 #common-layout {
   height: 100%;
 }
@@ -158,7 +247,11 @@ const handleLogout = () => {
   background-color: #162640;
 }
 
-:deep(.el-menu) {
+.el-dropdown-link {
+  outline: none;
+}
+
+::v-deep(.el-menu) {
   border-right: none;
 }
 </style>

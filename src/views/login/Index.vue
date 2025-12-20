@@ -17,7 +17,7 @@ const loginForm = reactive<LoginForm>({
 });
 
 const dialogFormVisible = ref<boolean>(false);
-const dialogFormTitle = ref<string>('Set Your New Password');
+const dialogFormTitle = ref<string>('Set your new password');
 const dialogFormRef = ref<FormInstance | null>(null);
 const dialogFormInput = reactive<UpdatePasswordRequest & { confirmPassword: string }>({
   id: null,
@@ -70,6 +70,7 @@ const handleLogin = async (): Promise<void> => {
         const token: string = result.data.token || '';
         sessionStorage.setItem('token', token);
         empStore.setUsername(getUsernameFromJwt(token));
+        empStore.setId(result.data.id);
         const redirect = router.currentRoute.value.query.redirect as string || '/dash-emp';
         router.push(redirect);
         ElMessage.success('Login success');
