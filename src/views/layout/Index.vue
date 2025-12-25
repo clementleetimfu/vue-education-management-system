@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { updatePassword, type UpdatePasswordRequest } from '@/api/auth';
+import { logout, updatePassword, type UpdatePasswordRequest } from '@/api/auth';
 import type { ApiResponse } from '@/api/common';
 import { useEmployeeStore } from '@/stores/emp';
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus';
@@ -78,7 +78,12 @@ const handleLogout = () => {
       type: 'warning',
     }
   )
-    .then(() => {
+    .then(async () => {
+      try {
+        await logout();
+      } catch (error: any) {
+        ElMessage.error(`Failed to logout`);
+      }
       sessionStorage.removeItem('token');
       ElMessage({
         type: 'success',

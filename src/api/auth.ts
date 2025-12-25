@@ -20,3 +20,5 @@ export interface UpdatePasswordRequest {
 export const login = (data: LoginRequest): Promise<ApiResponse<LoginResponse>> => request.post('/auth/login', data);
 
 export const updatePassword = (data: UpdatePasswordRequest): Promise<ApiResponse<boolean>> => request.post('/auth/update-password', data);
+
+export const logout = (): Promise<ApiResponse<void>> => request.post('/auth/logout');
