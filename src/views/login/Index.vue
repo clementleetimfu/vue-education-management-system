@@ -71,6 +71,7 @@ const handleLogin = async (): Promise<void> => {
         sessionStorage.setItem('token', token);
         empStore.setUsername(getUsernameFromJwt(token));
         empStore.setId(result.data.id);
+        empStore.setRoleName(result.data.roleName);
         const redirect = router.currentRoute.value.query.redirect as string || '/dash-emp';
         router.push(redirect);
         ElMessage.success('Login success');

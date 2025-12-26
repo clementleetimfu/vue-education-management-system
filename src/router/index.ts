@@ -8,6 +8,8 @@ import LogView from '@/views/log/Index.vue'
 import StudentView from '@/views/student/Index.vue'
 import ClazzView from '@/views/clazz/Index.vue'
 import LayoutView from '@/views/layout/Index.vue'
+import { ref } from 'vue'
+import { isDisabled } from '@/utils/permission'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,7 +24,7 @@ const router = createRouter({
           path: 'dash-emp',
           name: 'dash-emp',
           component: EmpDashboard,
-          meta: { requiresAuth: true } 
+          meta: { requiresAuth: true }
         },
         {
           path: 'dash-student',
@@ -58,7 +60,10 @@ const router = createRouter({
           path: 'log',
           name: 'log',
           component: LogView,
-          meta: { requiresAuth: true }
+          meta: {
+            requiresAuth: true,
+            requiresAdmin: true,
+          }
         }
       ],
     },
@@ -71,13 +76,18 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = !!sessionStorage.getItem('token') 
+  const disabledFlag = ref<boolean>(isDisabled());
+  const isLoggedIn = !!sessionStorage.getItem('token')
 
   if (to.meta.requiresAuth && !isLoggedIn) {
     next({ path: '/login', query: { redirect: to.fullPath } })
-  } else {
-    next()
   }
+
+  if (to.meta.requiresAdmin && disabledFlag.value) {
+    return next({ path: '/' });
+  }
+  
+  next()
 })
 
 export default router

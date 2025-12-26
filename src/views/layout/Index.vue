@@ -2,6 +2,7 @@
 import { logout, updatePassword, type UpdatePasswordRequest } from '@/api/auth';
 import type { ApiResponse } from '@/api/common';
 import { useEmployeeStore } from '@/stores/emp';
+import { isDisabled } from '@/utils/permission';
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus';
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -16,6 +17,7 @@ const dialogFormInput = reactive<UpdatePasswordRequest & { confirmPassword: stri
   password: '',
   confirmPassword: '',
 });
+const disabledFlag = ref<boolean>(isDisabled());
 
 const rules = reactive({
   password: [
@@ -172,7 +174,7 @@ const handleLogout = () => {
                 <el-menu-item index="/stud">Student</el-menu-item>
               </el-sub-menu>
 
-              <el-menu-item index="/log">
+              <el-menu-item index="/log" v-if="!disabledFlag">
                 <el-icon>
                   <Notebook />
                 </el-icon>

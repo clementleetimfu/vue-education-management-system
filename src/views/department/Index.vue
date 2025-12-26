@@ -5,6 +5,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 import { editDepartment, addDepartment, findAllDepartment, deleteDepartment } from '@/api/dept';
 import type { FindAllDepartmentResponse } from '@/api/dept';
 import type { ApiResponse } from '@/api/common';
+import { isDisabled } from '@/utils/permission';
 
 interface DeptForm {
   name: string;
@@ -16,6 +17,7 @@ const dialogFormTitle = ref<string>('');
 const dialogFormInput = reactive<DeptForm>({ name: '' });
 const dialogFormRef = ref<FormInstance | null>(null);
 const currentEditId = ref<number>(0);
+const disabledFlag = ref<boolean>(isDisabled());
 
 const rules = reactive<FormRules<DeptForm>>({
   name: [
@@ -124,7 +126,7 @@ const handleDialogFormSubmit = async (type: string) => {
 <template>
   <h1>Department</h1>
 
-  <el-button class="add-dept-btn" type="primary" @click="handleAddDepartment">+ Add Department</el-button>
+  <el-button class="add-dept-btn" :disabled="disabledFlag" type="primary" @click="handleAddDepartment">+ Add Department</el-button>
 
   <el-table :data="deptTableData" border style="width: 100%">
     <el-table-column type="index" label="No." width="100" align="center" />
@@ -132,10 +134,10 @@ const handleDialogFormSubmit = async (type: string) => {
     <el-table-column prop="updateTime" label="Update Time" align="center" />
     <el-table-column fixed="right" label="Actions" align="center">
       <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="handleEdit(row)">
+        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row)">
           Edit
         </el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

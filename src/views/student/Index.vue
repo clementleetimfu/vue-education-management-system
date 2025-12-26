@@ -3,6 +3,7 @@ import { findAllClazz, type ClazzFindAllResponse } from '@/api/clazz';
 import type { ApiResponse, PageResult } from '@/api/common';
 import { findAllEduLevel, type EduLevelFindAllResponse } from '@/api/eduLevel';
 import { addStudent, deleteStudent, findStudentById, searchStudent, updateStudent, type AddStudentRequest, type FindStudentByIdResponse, type SearchStudentRequest, type SearchStudentResponse } from '@/api/student';
+import { isDisabled } from '@/utils/permission';
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus';
 import { onMounted, reactive, ref } from 'vue'
 
@@ -101,6 +102,7 @@ const dialogFormInput = reactive<AddStudentRequest & { id: number | null }>({
   intakeDate: ''
 });
 const selectedIds = ref<number[]>([]);
+const disabledFlag = ref<boolean>(isDisabled());
 
 const getStudentTableData = async () => {
   try {
@@ -338,8 +340,8 @@ onMounted(() => {
     </el-form-item>
   </el-form>
 
-  <el-button @click="handleAddStudent" type="primary">+ Add Student</el-button>
-  <el-button @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
+  <el-button :disabled="disabledFlag" @click="handleAddStudent" type="primary">+ Add Student</el-button>
+  <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
 
   <el-table :data="studentTableData" border style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55" align="center" />
@@ -352,10 +354,10 @@ onMounted(() => {
     <el-table-column prop="updateTime" label="Last Updated" align="center" />
     <el-table-column fixed="right" label="Operations" min-width="120" align="center">
       <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="handleEdit(row.id)">
+        <el-button :disabled="disabledFlag" link type="primary" size="small" @click="handleEdit(row.id)">
           Edit
         </el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        <el-button :disabled="disabledFlag" link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

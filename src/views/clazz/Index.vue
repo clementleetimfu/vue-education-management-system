@@ -5,6 +5,7 @@ import type { ApiResponse, PageResult } from '@/api/common';
 import { findAllClassTeacher, type ClassTeacherResponse, type SearchEmployeeResponse } from '@/api/emp';
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus';
 import { findAllSubject, type SubjectFindAllResponse } from '@/api/subject';
+import { isDisabled } from '@/utils/permission';
 
 interface SearchForm {
   name: string;
@@ -44,6 +45,7 @@ const dialogFormInput = reactive<AddClazzRequest & { id: number | null }>({
 })
 const subjectOptions = ref<{ label: string; value: number }[]>([]);
 const teacherOptions = ref<{ label: string; value: number }[]>([]);
+const disabledFlag = ref<boolean>(isDisabled());
 
 watch(() => searchForm.clazzEndDateArr, (newVal: string[]) => {
   if (newVal && newVal.length === 2) {
@@ -273,7 +275,7 @@ onMounted(() => {
     </el-form-item>
   </el-form>
 
-  <el-button class="add-clazz-btn" type="primary" @click="handleAddClazz">+ Add Class</el-button>
+  <el-button :disabled="disabledFlag" class="add-clazz-btn" type="primary" @click="handleAddClazz">+ Add Class</el-button>
 
   <el-table :data="clazzTableData" border style="width: 100%">
     <el-table-column type="index" label="No." width="50" align="center" />
@@ -292,10 +294,10 @@ onMounted(() => {
     <el-table-column prop="updateTime" label="Update Time" width="200" align="center" />
     <el-table-column fixed="right" label="Actions" align="center">
       <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="handleEdit(row.id)">
+        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
           Edit
         </el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

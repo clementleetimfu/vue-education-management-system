@@ -10,6 +10,7 @@ import { findAllJobTitle } from '@/api/jobs';
 
 import { findAllDepartment } from '@/api/dept';
 import type { FindAllDepartmentResponse } from '@/api/dept';
+import { isDisabled } from '@/utils/permission';
 
 interface SearchForm {
   name: string;
@@ -59,6 +60,7 @@ const dialogFormInput = reactive<AddEmployeeRequest & { id: number | null }>({
 });
 const token = ref<string>('');
 const jobTitleOptions = ref<{ label: string; value: number }[]>([]);
+const disabledFlag = ref<boolean>(isDisabled());
 
 let rules = reactive<FormRules<any>>({
   username: [
@@ -401,8 +403,8 @@ onMounted(() => {
     </el-form-item>
   </el-form>
 
-  <el-button @click="handleAddEmployee" type="primary">+ Add Employee</el-button>
-  <el-button @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
+  <el-button :disabled="disabledFlag" @click="handleAddEmployee" type="primary">+ Add Employee</el-button>
+  <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
 
   <el-table :data="empTableDate" border style="width: 100%" @selection-change="handleSelectionChange">
     <el-table-column type="selection" width="55" align="center" />
@@ -420,10 +422,10 @@ onMounted(() => {
     <el-table-column prop="updateTime" label="Last Updated" align="center" />
     <el-table-column fixed="right" label="Operations" min-width="120" align="center">
       <template #default="{ row }">
-        <el-button link type="primary" size="small" @click="handleEdit(row.id)">
+        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
           Edit
         </el-button>
-        <el-button link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
       </template>
     </el-table-column>
   </el-table>

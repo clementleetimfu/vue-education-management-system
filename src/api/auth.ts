@@ -10,6 +10,7 @@ export interface LoginResponse {
   id: number | null;
   token: string;
   isFirstLogged: boolean;
+  roleName: string;
 }
 
 export interface UpdatePasswordRequest {
