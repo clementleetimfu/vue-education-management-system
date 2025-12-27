@@ -140,20 +140,20 @@ const handleDialogFormSubmit = async () => {
     </div>
   </div>
 
-  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="400px" @close="handleCloseDialogForm" class="password-dialog">
+  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
     <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules">
-      <el-form-item label="New Password" label-width="130px" prop="password">
-        <el-input v-model="dialogFormInput.password" type="password" placeholder="Enter new password" show-password />
+      <el-form-item label="New Password" label-width="150px" prop="password">
+        <el-input v-model="dialogFormInput.password" type="password" />
       </el-form-item>
-      <el-form-item label="Confirm Password" label-width="130px" prop="confirmPassword">
-        <el-input v-model="dialogFormInput.confirmPassword" type="password" placeholder="Confirm new password" show-password />
+      <el-form-item label="Confirm Password" label-width="150px" prop="confirmPassword">
+        <el-input v-model="dialogFormInput.confirmPassword" type="password" />
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Cancel</el-button>
         <el-button type="primary" @click="handleDialogFormSubmit">
-          Update Password
+          Confirm
         </el-button>
       </div>
     </template>
@@ -281,57 +281,6 @@ const handleDialogFormSubmit = async () => {
 .clear-btn {
   text-align: center;
   margin-top: 20px;
-}
-
-.password-dialog :deep(.el-dialog) {
-  border-radius: 16px;
-}
-
-.password-dialog :deep(.el-dialog__header) {
-  padding: 24px 24px 12px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.password-dialog :deep(.el-dialog__title) {
-  font-size: 20px;
-  font-weight: 600;
-  color: #162640;
-}
-
-.password-dialog :deep(.el-dialog__body) {
-  padding: 24px;
-}
-
-.password-dialog :deep(.el-form-item) {
-  margin-bottom: 24px;
-}
-
-.password-dialog :deep(.el-form-item__label) {
-  font-weight: 500;
-  color: #333;
-}
-
-.password-dialog :deep(.el-input__wrapper) {
-  border-radius: 10px;
-  padding: 12px 16px;
-  transition: all 0.3s ease;
-}
-
-.password-dialog :deep(.el-input__wrapper:hover),
-.password-dialog :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 2px 12px rgba(22, 38, 64, 0.15);
-}
-
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.dialog-footer :deep(.el-button) {
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-weight: 500;
 }
 
 .dialog-footer :deep(.el-button--primary) {
