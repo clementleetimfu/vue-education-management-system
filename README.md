@@ -5,343 +5,560 @@
 ![Element Plus](https://img.shields.io/badge/Element_Plus-2.11.9-409EFF?style=flat&logo=element&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?style=flat&logo=vite&logoColor=white)
 
-Frontend application for education management built with Vue 3, TypeScript, and Element Plus.
+A modern application built with Vue 3, TypeScript, and Element Plus for managing educational institution data.
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Backend Integration](#backend-integration)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
+- [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
-- [API Configuration](#api-configuration)
-- [Routes](#routes)
-- [Authentication](#authentication)
-- [Role-Based Access Control](#role-based-access-control)
-- [API Endpoints Reference](#api-endpoints-reference)
+- [Routing](#routing)
 - [State Management](#state-management)
-- [UI Components](#ui-components)
-- [Theme](#theme)
+- [API Integration](#api-integration)
+- [Authentication](#authentication)
+- [Components](#components)
+- [Styling](#styling)
+- [Build & Deploy](#build--deploy)
+- [Backend Integration](#backend-integration)
+
+---
 
 ## Overview
 
-The Education Management System is a web application for managing educational institution data. It provides:
+The Vue Education Management System is a frontend application that provides a comprehensive interface for administering departments, employees, classes, and students. It features role-based access control, analytics dashboards with ECharts visualizations, and a modern UI built with Element Plus.
 
-- Management of departments, employees, classes, and students
-- Role-based access control with Admin and Employee roles
-- Separate dashboards for employee analytics and student analytics
-- Activity logging for admin users
+### Key Highlights
 
-## Backend Integration
+- **Vue 3 Composition API** - All components use `<script setup>` syntax
+- **TypeScript** - Full type safety across the application
+- **Pinia** - State management with session persistence
+- **Element Plus** - Comprehensive UI component library
+- **ECharts** - Interactive data visualizations
+- **JWT Authentication** - Secure token-based auth with role-based access
 
-**Backend Repository:** [Java Backend](https://github.com/clementleetimfu/java-education-management-system)
-
-This frontend connects to a backend API server (typically running at `http://localhost:8080` in development) for all data operations and authentication.
+---
 
 ## Features
 
-- **Authentication** - JWT-based login with first-time password reset (minimum 10 characters)
-- **Employee Management** - Search, add, edit, and delete employees with work experience tracking
-- **Student Management** - Search, add, edit, and delete students with education levels
-- **Department Management** - Organizational structure management
-- **Class Management** - Class scheduling with teacher assignment
-- **Dashboards** - Analytics with ECharts for employee and student data
-- **Activity Logs** - Admin-only access to system activity logs
-- **Role-Based Access** - Admin vs Employee permissions
+| Feature | Description |
+|---------|-------------|
+| **Authentication** | JWT-based login with first-time password reset (min 10 chars) |
+| **Employee Management** | Full CRUD with work experience tracking and search |
+| **Student Management** | Complete student records with education levels and class assignment |
+| **Department Management** | Organizational structure management |
+| **Class Management** | Class scheduling with teacher and subject assignment |
+| **Employee Dashboard** | Analytics charts for job title and gender distribution |
+| **Student Dashboard** | Analytics charts for class and education level distribution |
+| **Activity Logs** | Admin-only access to system activity logs with pagination |
+| **Role-Based Access** | ROLE_ADMIN vs ROLE_EMPLOYEE permissions |
+
+---
 
 ## Tech Stack
 
-| Category | Technology | Version |
-|----------|-----------|---------|
-| Framework | Vue 3 | ^3.5.25 |
-| Language | TypeScript | ~5.9.0 |
-| Build Tool | Vite | ^7.2.4 |
-| State Management | Pinia | ^3.0.4 |
-| State Persistence | pinia-plugin-persistedstate | ^4.7.1 |
-| Routing | Vue Router | ^4.6.3 |
-| UI Framework | Element Plus | ^2.11.9 |
-| Icons | @element-plus/icons-vue | ^2.3.2 |
-| HTTP Client | Axios | ^1.13.2 |
-| Charts | ECharts | ^6.0.0 |
-| DevTools | vite-plugin-vue-devtools | ^8.0.5 |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| [Vue](https://vuejs.org/) | ^3.5.25 | Progressive JavaScript framework |
+| [TypeScript](https://www.typescriptlang.org/) | ~5.9.0 | Type-safe JavaScript |
+| [Vite](https://vitejs.dev/) | ^7.2.4 | Build tool and dev server |
+| [Vue Router](https://router.vuejs.org/) | ^4.6.3 | Official routing library |
+| [Pinia](https://pinia.vuejs.org/) | ^3.0.4 | State management |
+| [pinia-plugin-persistedstate](https://github.com/prazdevs/pinia-plugin-persistedstate) | ^4.7.1 | State persistence |
+| [Element Plus](https://element-plus.org/) | ^2.11.9 | Vue 3 UI framework |
+| [Axios](https://axios-http.com/) | ^1.13.2 | HTTP client |
+| [ECharts](https://echarts.apache.org/) | ^6.0.0 | Data visualization |
 
-## Prerequisites
+---
 
-- Node.js: `^20.19.0` or `>=22.12.0`
+## Quick Start
 
-## Getting Started
+### Prerequisites
+
+- **Node.js:** `^20.19.0` or `>=22.12.0`
+- **Backend API:** Running at `http://localhost:8080`
 
 ### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+
+# Navigate to project directory
+cd vue-education-management-system
+
+# Install dependencies
 npm install
 ```
 
 ### Development
 
 ```bash
+# Start development server
 npm run dev
 ```
 
+The application will be available at `http://localhost:5173`
+
 ### Build for Production
+
+```bash
+# Type check and build
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+---
+
+## Project Structure
+
+```
+vue-education-management-system/
+├── public/                      # Static assets
+│   └── favicon.ico
+├── src/
+│   ├── api/                     # API service layer
+│   │   ├── auth.ts              # Authentication endpoints
+│   │   ├── clazz.ts             # Class endpoints
+│   │   ├── common.ts            # Shared TypeScript interfaces
+│   │   ├── dept.ts              # Department endpoints
+│   │   ├── eduLevel.ts          # Education level endpoints
+│   │   ├── emp.ts               # Employee endpoints
+│   │   ├── empDash.ts           # Employee dashboard endpoints
+│   │   ├── jobs.ts              # Job title endpoints
+│   │   ├── log.ts               # Activity log endpoints
+│   │   ├── student.ts           # Student endpoints
+│   │   ├── studentDash.ts       # Student dashboard endpoints
+│   │   └── subject.ts           # Subject endpoints
+│   ├── assets/                  # Assets
+│   │   ├── login-background.jpg
+│   │   └── main.css             # Global styles
+│   ├── constants/               # Constants
+│   │   └── role.ts              # Role enum (ROLE_ADMIN, ROLE_EMPLOYEE)
+│   ├── router/                  # Router
+│   │   └── index.ts             # Route configuration & guards
+│   ├── stores/                  # Pinia stores
+│   │   └── emp.ts               # Employee state with persistence
+│   ├── utils/                   # Utilities
+│   │   ├── permission.ts        # Permission utilities (isDisabled)
+│   │   └── request.ts           # Axios instance with interceptors
+│   ├── views/                   # Page components
+│   │   ├── clazz/               # Class management
+│   │   ├── dashboard/           # Dashboards (Emp/Student)
+│   │   ├── department/          # Department management
+│   │   ├── employee/            # Employee management
+│   │   ├── layout/              # Main layout with sidebar
+│   │   ├── log/                 # Activity logs (admin only)
+│   │   ├── login/               # Login page
+│   │   └── student/             # Student management
+│   ├── App.vue                  # Root component
+│   └── main.ts                  # Entry point
+├── .vscode/                     # VSCode settings
+├── dist/                        # Build output
+├── vite.config.ts               # Vite configuration
+├── tsconfig.json                # TypeScript config
+└── package.json                 # Dependencies
+```
+
+---
+
+## Routing
+
+### Route Configuration
+
+**Location:** `src/router/index.ts`
+
+```typescript
+const routes = [
+  {
+    path: '/',
+    component: LayoutView,
+    redirect: '/dash-emp',
+    children: [
+      { path: 'dash-emp', component: EmpDashboard },
+      { path: 'dash-student', component: StudentDashboard },
+      { path: 'dept', component: DepartmentView },
+      { path: 'emp', component: EmployeeView },
+      { path: 'clazz', component: ClazzView },
+      { path: 'stud', component: StudentView },
+      { path: 'log', component: LogView, meta: { requiresAdmin: true } }
+    ]
+  },
+  { path: '/login', component: LoginView }
+]
+```
+
+### Route Guards
+
+The router implements navigation guards for:
+
+1. **Authentication Check** - Redirects to login if not authenticated
+2. **Admin Check** - Blocks non-admin users from admin-only routes
+3. **Redirect Handling** - Preserves intended destination after login
+
+```typescript
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = !!sessionStorage.getItem('token')
+  const isAdmin = !isDisabled()
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    next({ path: '/login', query: { redirect: to.fullPath } })
+  } else if (to.meta.requiresAdmin && !isAdmin) {
+    next({ path: '/' })
+  } else {
+    next()
+  }
+})
+```
+
+### Route Table
+
+| Path | Component | Auth Required | Admin Required |
+|------|-----------|---------------|----------------|
+| `/login` | Login | No | No |
+| `/dash-emp` | Employee Dashboard | Yes | No |
+| `/dash-student` | Student Dashboard | Yes | No |
+| `/dept` | Department | Yes | No |
+| `/emp` | Employee | Yes | No |
+| `/clazz` | Class | Yes | No |
+| `/stud` | Student | Yes | No |
+| `/log` | Activity Log | Yes | Yes |
+
+---
+
+## State Management
+
+### Pinia Store
+
+**Location:** `src/stores/emp.ts`
+
+```typescript
+export const useEmployeeStore = defineStore('employee', {
+  state: () => ({
+    id: null as number | null,
+    username: '' as string,
+    roleName: '' as string,  // ROLE_ADMIN or ROLE_EMPLOYEE
+  }),
+  actions: {
+    setUsername(name: string) { this.username = name },
+    setId(id: number | null) { this.id = id },
+    setRoleName(roleName: string) { this.roleName = roleName },
+  },
+  persist: {
+    storage: sessionStorage,  // Session-scoped persistence
+  },
+})
+```
+
+### Usage
+
+```typescript
+import { useEmployeeStore } from '@/stores/emp'
+
+const empStore = useEmployeeStore()
+empStore.setUsername('admin')
+empStore.setId(1)
+empStore.setRoleName('ROLE_ADMIN')
+```
+
+---
+
+## API Integration
+
+### HTTP Client Configuration
+
+**Location:** `src/utils/request.ts`
+
+The Axios instance is configured with:
+
+- **Base URL:** `/api` (proxied to `http://localhost:8080` in dev)
+- **Timeout:** 10000ms
+- **Request Interceptor:** Automatically adds Bearer token
+- **Response Interceptor:** Handles 401 errors with redirect to login
+
+```typescript
+request.interceptors.request.use((config) => {
+  config.headers.Authorization = 'Bearer ' + sessionStorage.getItem('token')
+  return config
+})
+
+request.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response.status === 401) {
+      router.push('/login')
+      ElMessage.error('Session expired. Please login again')
+    }
+    return Promise.reject(error)
+  }
+)
+```
+
+### API Service Layer
+
+All API calls are organized in `src/api/` with TypeScript interfaces:
+
+```typescript
+// Example: src/api/auth.ts
+export interface LoginRequest {
+  username: string
+  password: string
+}
+
+export interface LoginResponse {
+  id: number | null
+  token: string
+  isFirstLogged: boolean
+  roleName: string
+}
+
+export const login = (data: LoginRequest): Promise<ApiResponse<LoginResponse>> =>
+  request.post('/auth/login', data)
+```
+
+### Response Format
+
+All API responses follow this structure:
+
+```typescript
+interface ApiResponse<T> {
+  code: number        // 0 = success, 1 = error
+  message: string     // Response message
+  data: T            // Response data
+}
+
+// Paginated response
+interface PageResult<T> {
+  total: number
+  rows: T[]
+}
+```
+
+---
+
+## Authentication
+
+### Login Flow
+
+```
+┌─────────────────┐
+│  User enters    │
+│  credentials    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  POST /auth/    │
+│  login          │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐     ┌─────────────────────┐
+│ isFirstLogged   │────▶│ Set new password    │
+│ = false         │     │ (min 10 chars)      │
+└────────┬────────┘     └─────────────────────┘
+         │
+         ▼ true
+┌─────────────────┐
+│ Store token in  │
+│ sessionStorage  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Parse JWT for   │
+│ username & role │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Store in Pinia  │
+│ & redirect to   │
+│ dashboard       │
+└─────────────────┘
+```
+
+### Password Validation
+
+```typescript
+const rules = {
+  password: [
+    { required: true, message: 'Password is required', trigger: 'blur' },
+    { min: 10, message: 'Password length at least 10 characters', trigger: 'blur' }
+  ],
+  confirmPassword: [
+    { required: true, message: 'Confirm password is required', trigger: 'blur' },
+    {
+      validator: (_, value: string) => {
+        if (value !== dialogFormInput.password) {
+          throw new Error('Passwords do not match')
+        }
+      },
+      trigger: 'change'
+    }
+  ]
+}
+```
+
+---
+
+## Components
+
+### Layout Component
+
+**Location:** `src/views/layout/Index.vue`
+
+The main layout contains:
+- **Header** - App title and user dropdown (Change Password, Logout)
+- **Sidebar** - Navigation menu with grouped items
+- **Main Content** - Router view for page content
+
+**Menu Structure:**
+```
+Dashboard
+  ├── Employee
+  └── Student
+Organization
+  ├── Department
+  └── Employee
+Academic
+  ├── Class
+  └── Student
+Log (admin only)
+```
+
+### Login Component
+
+**Location:** `src/views/login/Index.vue`
+
+Features:
+- Username and password input
+- First-time login password reset dialog
+- JWT payload parsing for user info
+- Form validation
+
+### Dashboard Components
+
+**Employee Dashboard:** `src/views/dashboard/EmpDashboard.vue`
+- Bar chart: Employee count by job title
+- Pie chart: Employee count by gender
+
+**Student Dashboard:** `src/views/dashboard/StudentDashboard.vue`
+- Bar chart: Student count by class
+- Pie chart: Student count by education level
+
+All charts use **ECharts** with gradient color styling.
+
+---
+
+## Styling
+
+### Theme Colors
+
+```css
+--primary-dark: #162640
+--primary-light: #1e3a5f
+--accent: #4FC3F7
+--background: #f5f7fa
+```
+
+### Global Styles
+
+**Location:** `src/assets/main.css`
+
+```css
+* {
+  margin: 0px;
+  font-family: "Segoe UI", "Helvetica Neue", "Roboto", Arial, sans-serif;
+}
+
+html, body, #app {
+  height: 100%;
+}
+```
+
+### Component Styling
+
+Each `.vue` file uses scoped styles with:
+- CSS custom properties for theming
+- Smooth transitions on interactive elements
+- Gradient backgrounds for depth
+- Hover effects for better UX
+
+### Element Plus Customization
+
+The app uses Element Plus components with custom styling via deep selectors:
+
+```vue
+<style scoped>
+::v-deep(.el-menu-item.is-active) {
+  background: linear-gradient(135deg, #4FC3F7 0%, #29b6f6 100%) !important;
+  color: #162640 !important;
+}
+</style>
+```
+
+---
+
+## Build & Deploy
+
+### Build Configuration
+
+**Location:** `vite.config.ts`
+
+```typescript
+export default defineConfig({
+  plugins: [vue(), vueDevTools()],
+  resolve: {
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  }
+})
+```
+
+### Production Build
 
 ```bash
 npm run build
 ```
 
-Preview the production build locally:
+Output: `dist/` directory with static files
 
-```bash
-npm run preview
-```
+---
 
-## Project Structure
+## Backend Integration
 
-```
-src/
-├── api/                      # API service layer
-│   ├── auth.ts               # Authentication endpoints
-│   ├── clazz.ts              # Class management endpoints
-│   ├── common.ts             # Common type definitions
-│   ├── dept.ts               # Department endpoints
-│   ├── eduLevel.ts           # Education level endpoints
-│   ├── emp.ts                # Employee endpoints
-│   ├── empDash.ts            # Employee dashboard endpoints
-│   ├── jobs.ts               # Job title endpoints
-│   ├── log.ts                # Activity log endpoints
-│   ├── student.ts            # Student endpoints
-│   ├── studentDash.ts        # Student dashboard endpoints
-│   └── subject.ts            # Subject endpoints
-├── assets/                   # Static assets
-│   ├── login-background.jpg
-│   └── main.css
-├── constants/
-│   └── role.ts               # Role enum definitions
-├── router/
-│   └── index.ts              # Vue Router configuration
-├── stores/
-│   └── emp.ts                # Employee Pinia store
-├── utils/
-│   ├── permission.ts         # Permission utilities
-│   └── request.ts            # Axios instance configuration
-├── views/                    # Page components
-│   ├── clazz/
-│   │   └── Index.vue         # Class management page
-│   ├── dashboard/
-│   │   ├── EmpDashboard.vue  # Employee dashboard
-│   │   └── StudentDashboard.vue # Student dashboard
-│   ├── department/
-│   │   └── Index.vue         # Department management page
-│   ├── employee/
-│   │   └── Index.vue         # Employee management page
-│   ├── layout/
-│   │   └── Index.vue         # Main layout with navigation
-│   ├── log/
-│   │   └── Index.vue         # Activity logs page (admin only)
-│   ├── login/
-│   │   └── Index.vue         # Login page
-│   └── student/
-│       └── Index.vue         # Student management page
-├── App.vue                   # Root component
-└── main.ts                   # Application entry point
-```
+### Connected Backend
 
-## API Configuration
+**Repository:** [Java Backend](https://github.com/clementleetimfu/java-education-management-system)
 
-The application uses Axios with the following configuration:
+### API Endpoints
 
-- **Base URL**: `/api` (proxied to `http://localhost:8080` in development)
-- **Timeout**: 10000ms
-- **Authentication**: Bearer token stored in `sessionStorage`
+| Module | Endpoints |
+|--------|-----------|
+| **Auth** | `POST /auth/login`, `POST /auth/update-password`, `POST /auth/logout` |
+| **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps` |
+| **Students** | `GET /students/search`, `GET /students/{id}`, `POST /students`, `PUT /students`, `DELETE /students` |
+| **Departments** | `GET /depts`, `POST /depts`, `PUT /depts`, `DELETE /depts/{id}` |
+| **Classes** | `GET /clazz/search`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` |
+| **Dashboard** | `GET /emps/jobTitle/count`, `GET /emps/gender/count`, `GET /students/clazz/count`, `GET /students/edu-level/count` |
+| **Logs** | `GET /logs` |
+| **Reference** | `GET /edu-levels`, `GET /jobs`, `GET /subjects` |
 
-Request interceptor automatically adds the Authorization header:
-```typescript
-config.headers.Authorization = 'Bearer ' + sessionStorage.getItem('token')
-```
+---
 
-Response interceptor handles 401 errors by redirecting to login.
+## Document Version
 
-## Routes
-
-| Path | Component | Auth Required | Admin Required |
-|------|-----------|---------------|----------------|
-| `/` | Layout (redirects to `/dash-emp`) | Yes | No |
-| `/login` | Login | No | No |
-| `/dash-emp` | Employee Dashboard | Yes | No |
-| `/dash-student` | Student Dashboard | Yes | No |
-| `/dept` | Department Management | Yes | No |
-| `/emp` | Employee Management | Yes | No |
-| `/clazz` | Class Management | Yes | No |
-| `/stud` | Student Management | Yes | No |
-| `/log` | Activity Logs | Yes | Yes |
-
-## Authentication
-
-Login flow:
-
-1. POST `/auth/login` with `username` and `password`
-2. Response includes:
-   - `id`: User ID
-   - `token`: JWT bearer token
-   - `isFirstLogged`: Boolean flag for first-time login
-   - `roleName`: User role (ROLE_ADMIN or ROLE_EMPLOYEE)
-3. If `isFirstLogged` is false, user must set a new password (min 10 characters)
-4. Token stored in `sessionStorage`
-5. User info (id, username, roleName) persisted in Pinia store
-
-Password change endpoints:
-- POST `/auth/update-password` - Update user password
-- POST `/auth/logout` - Logout
-
-## Role-Based Access Control
-
-Two roles defined in `constants/role.ts`:
-
-- `ROLE_ADMIN`: Full system access including log viewing
-- `ROLE_EMPLOYEE`: Standard access without log viewing
-
-The `isDisabled()` utility in `utils/permission.ts` checks if the current user is not an admin.
-
-## API Endpoints Reference
-
-### Authentication (`api/auth.ts`)
-- `POST /auth/login` - User login
-- `POST /auth/update-password` - Update password
-- `POST /auth/logout` - User logout
-
-### Departments (`api/dept.ts`)
-- `GET /depts` - List all departments
-- `POST /depts` - Add department
-- `PUT /depts` - Edit department
-- `DELETE /depts/{id}` - Delete department
-
-### Employees (`api/emp.ts`)
-- `GET /emps/search` - Search employees with pagination
-- `GET /emps/{id}` - Find employee by ID
-- `GET /emps/teachers` - List all class teachers
-- `POST /emps` - Add employee
-- `PUT /emps` - Update employee
-- `DELETE /emps?ids={ids}` - Delete employees
-- `GET /emps/jobTitle/count` - Employee count by job title
-- `GET /emps/gender/count` - Employee count by gender
-
-### Students (`api/student.ts`)
-- `GET /students/search` - Search students with pagination
-- `GET /students/{id}` - Find student by ID
-- `POST /students` - Add student
-- `PUT /students` - Update student
-- `DELETE /students?ids={ids}` - Delete students
-- `GET /students/clazz/count` - Student count by class
-- `GET /students/edu-level/count` - Student count by education level
-
-### Classes (`api/clazz.ts`)
-- `GET /clazz/search` - Search classes with pagination
-- `GET /clazz/{id}` - Find class by ID
-- `GET /clazz` - List all classes
-- `POST /clazz` - Add class
-- `PUT /clazz` - Update class
-- `DELETE /clazz/{id}` - Delete class
-
-### Reference Data
-- `GET /edu-levels` - List all education levels (`api/eduLevel.ts`)
-- `GET /subjects` - List all subjects (`api/subject.ts`)
-- `GET /jobs` - List all job titles (`api/jobs.ts`)
-
-### Logs (`api/log.ts`)
-- `GET /logs` - Get activity logs with pagination (admin only)
-
-## Common Types (`api/common.ts`)
-
-```typescript
-interface ApiResponse<T> {
-  code: number;
-  message: string;
-  data: T;
-}
-
-interface PageResult<T> {
-  total: number;
-  rows: T[];
-}
-
-interface Page {
-  page: number;
-  pageSize: number;
-}
-```
-
-## State Management (Pinia)
-
-### Employee Store (`stores/emp.ts`)
-
-Persisted to `sessionStorage`:
-
-```typescript
-state: {
-  id: number | null
-  username: string
-  roleName: string
-}
-```
-
-Actions:
-- `setUsername(name: string)`
-- `setId(id: number | null)`
-- `setRoleName(roleName: string)`
-
-## UI Components
-
-The application uses Element Plus components:
-
-### Layout
-- `el-container`, `el-header`, `el-aside`, `el-main` - Main layout structure
-
-### Navigation
-- `el-menu`, `el-sub-menu`, `el-menu-item` - Sidebar navigation
-- `el-scrollbar` - Scrollable sidebar
-- `el-dropdown`, `el-dropdown-menu`, `el-dropdown-item` - User menu
-
-### Forms
-- `el-form`, `el-form-item` - Form structure
-- `el-input` - Text and password inputs
-- `el-button` - Action buttons
-
-### Data Display
-- `el-table` - Data tables
-- `el-tag` - Status indicators
-- `el-text` - Text display
-
-### Feedback
-- `el-message` - Toast notifications
-- `el-message-box` - Confirmation dialogs
-- `el-dialog` - Modal dialogs
-
-### Icons
-- All icons from `@element-plus/icons-vue`:
-  - `Management`, `Avatar`, `DataAnalysis`, `OfficeBuilding`
-  - `School`, `Notebook`, `Lock`, `SwitchButton`
-
-### Charts
-- ECharts for dashboard visualizations
-
-## Theme
-
-Primary color: `#162640` (dark blue)
-Accent color: `#4FC3F7` (light blue)
-
-Layout includes:
-- Header with logo, title, and user dropdown
-- Sidebar with menu navigation
-- Main content area
-
-Menu structure:
-- Dashboard (Employee, Student)
-- Organization (Department, Employee)
-- Academic (Class, Student)
-- Log (admin only)
-
-User dropdown options:
-- Change Password
-- Logout
+- **Version**: 1.0
+- **Last Updated**: 2026-01-01
