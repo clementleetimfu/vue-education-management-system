@@ -119,14 +119,14 @@ const handleLogout = () => {
 
           <el-col :span="6" class="header-right">
             <ThemeToggle />
-            <el-dropdown>
+            <el-dropdown popper-class="glass-dropdown">
               <span class="el-dropdown-link">
                 <el-text class="header-username"><el-icon>
                     <Avatar />
                   </el-icon>&nbsp;&nbsp;{{ empStore.username }}</el-text>
               </span>
               <template #dropdown>
-                <el-dropdown-menu class="glass-dropdown">
+                <el-dropdown-menu>
                   <el-dropdown-item @click="handleChangePassword"><el-icon>
                       <Lock />
                     </el-icon>&nbsp;Change Password</el-dropdown-item>
@@ -376,17 +376,10 @@ const handleLogout = () => {
   background: var(--card-bg) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-border) !important;
   border-radius: 16px !important;
-  box-shadow: 0 8px 32px var(--glass-shadow);
-  padding: 8px;
-}
-
-:deep(.el-dropdown-menu) {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+  box-shadow: 0 8px 32px var(--glass-shadow) !important;
+  padding: 8px !important;
 }
 
 :deep(.el-dropdown-menu__item) {
