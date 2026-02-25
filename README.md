@@ -11,6 +11,7 @@ A modern application built with Vue 3, TypeScript, and Element Plus for managing
 
 - [Overview](#overview)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
@@ -54,6 +55,58 @@ The Vue Education Management System is a frontend application that provides a co
 | **Student Dashboard** | Analytics charts for class and education level distribution |
 | **Activity Logs** | Admin-only access to system activity logs with pagination |
 | **Role-Based Access** | ROLE_ADMIN vs ROLE_EMPLOYEE permissions |
+
+---
+
+## Screenshots
+
+### Login
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Login Light](./screenshots/login_light.png) | ![Login Dark](./screenshots/login_dark.png) |
+
+### Employee Dashboard
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Employee Dashboard Light](./screenshots/employee_dashboard_light.png) | ![Employee Dashboard Dark](./screenshots/employee_dashboard_dark.png) |
+
+### Student Dashboard
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Student Dashboard Light](./screenshots/student_dashboard_light.png) | ![Student Dashboard Dark](./screenshots/student_dashboard_dark.png) |
+
+### Employee Management
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Employee Light](./screenshots/employee_light.png) | ![Employee Dark](./screenshots/employee_dark.png) |
+
+### Student Management
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Student Light](./screenshots/student_light.png) | ![Student Dark](./screenshots/student_dark.png) |
+
+### Department Management
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Department Light](./screenshots/department_light.png) | ![Department Dark](./screenshots/department_dark.png) |
+
+### Class Management
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Class Light](./screenshots/class_light.png) | ![Class Dark](./screenshots/class_dark.png) |
+
+### Activity Logs
+
+| Light Mode | Dark Mode |
+|------------|-----------|
+| ![Log Light](./screenshots/log_light.png) | ![Log Dark](./screenshots/log_dark.png) |
 
 ---
 
