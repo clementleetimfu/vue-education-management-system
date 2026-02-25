@@ -124,43 +124,49 @@ const handleDialogFormSubmit = async (type: string) => {
 </script>
 
 <template>
-  <h1>Department</h1>
+<h1>Department</h1>
 
-  <el-button class="add-dept-btn" :disabled="disabledFlag" type="primary" @click="handleAddDepartment">+ Add Department</el-button>
+  <div id="container">
+    <el-button class="add-dept-btn" :disabled="disabledFlag" type="primary" @click="handleAddDepartment">+ Add Department</el-button>
 
-  <el-table :data="deptTableData" border style="width: 100%">
-    <el-table-column type="index" label="No." width="100" align="center" />
-    <el-table-column prop="name" label="Department Name" align="center" />
-    <el-table-column prop="updateTime" label="Update Time" align="center" />
-    <el-table-column fixed="right" label="Actions" align="center">
-      <template #default="{ row }">
-        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row)">
-          Edit
-        </el-button>
-        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+    <el-table :data="deptTableData" border style="width: 100%">
+      <el-table-column type="index" label="No." width="100" align="center" />
+      <el-table-column prop="name" label="Department Name" align="center" />
+      <el-table-column prop="updateTime" label="Update Time" align="center" />
+      <el-table-column fixed="right" label="Actions" align="center">
+        <template #default="{ row }">
+          <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row)">
+            Edit
+          </el-button>
+          <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
+      <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules">
+        <el-form-item label="Department Name" label-width="150px" prop="name">
+          <el-input v-model="dialogFormInput.name" placeholder="Enter department name" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
+            Confirm
+          </el-button>
+        </div>
       </template>
-    </el-table-column>
-  </el-table>
-
-  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
-    <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules">
-      <el-form-item label="Department Name" label-width="150px" prop="name">
-        <el-input v-model="dialogFormInput.name" placeholder="Enter department name" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
-          Confirm
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+    </el-dialog>
+  </div>
 
 </template>
 
 <style scoped>
+#container {
+  min-height: calc(100vh - 180px);
+}
+
 .add-dept-btn {
   margin: 20px 0;
 }

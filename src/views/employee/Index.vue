@@ -55,7 +55,7 @@ const dialogFormInput = reactive<AddEmployeeRequest & { id: number | null }>({
   hireDate: '',
   deptId: null,
   phone: '',
-  salary:'',
+  salary: '',
   workExpList: []
 });
 const token = ref<string>('');
@@ -380,180 +380,187 @@ onMounted(() => {
 <template>
   <h1>Employee</h1>
 
-  <el-form :inline="true" :model="searchForm" class="searchForm">
+  <div id="container">
+    <el-form :inline="true" :model="searchForm" class="searchForm">
 
-    <el-form-item label="Name">
-      <el-input v-model="searchForm.name" placeholder="Search by employee name" />
-    </el-form-item>
-
-    <el-form-item label="Gender">
-      <el-select v-model="searchForm.gender" placeholder="Select gender" clearable>
-        <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label" :value="gender.value" />
-      </el-select>
-    </el-form-item>
-
-    <el-form-item label="Hire Date">
-      <el-date-picker v-model="searchForm.hireDateArr" type="daterange" range-separator="To"
-        start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
-    </el-form-item>
-
-    <el-form-item>
-      <el-button type="primary" @click="handleSearch">Search</el-button>
-      <el-button @click="handleClear">Clear</el-button>
-    </el-form-item>
-  </el-form>
-
-  <el-button :disabled="disabledFlag" @click="handleAddEmployee" type="primary">+ Add Employee</el-button>
-  <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
-
-  <el-table :data="empTableDate" border style="width: 100%" @selection-change="handleSelectionChange">
-    <el-table-column type="selection" width="55" align="center" />
-    <el-table-column prop="name" label="Name" align="center" />
-    <el-table-column prop="gender" label="Gender" align="center" />
-    <el-table-column prop="image" label="Avatar" align="center">
-      <template #default="{ row }">
-        <el-image v-if="row.image" :src="row.image" fit="fill" style="height: 50px;" />
-        <span v-else>N/A</span>
-      </template>
-    </el-table-column>
-    <el-table-column prop="deptName" label="Department" align="center" />
-    <el-table-column prop="jobTitle" label="Job Title" align="center" />
-    <el-table-column prop="hireDate" label="Hire Date" align="center" />
-    <el-table-column prop="updateTime" label="Last Updated" align="center" />
-    <el-table-column fixed="right" label="Operations" min-width="120" align="center">
-      <template #default="{ row }">
-        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
-          Edit
-        </el-button>
-        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-
-  <el-pagination v-model:current-page="searchEmployeeRequest.page" v-model:page-size="searchEmployeeRequest.pageSize"
-    :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
-    @size-change="handlePageSizeChange" @current-change="handlePageChange" />
-
-  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="55%" @close="handleCloseDialogForm">
-    <el-form :model="dialogFormInput" label-width="160px" :rules="rules" ref="dialogFormRef">
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="Username" prop="username">
-            <el-input class="main-form-input" v-model="dialogFormInput.username"
-              placeholder="Enter username (2-50 characters)" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Name" prop="name">
-            <el-input class="main-form-input" v-model="dialogFormInput.name"
-              placeholder="Enter name (2-50 characters)" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="Gender" prop="gender">
-            <el-select class="main-form-input" v-model="dialogFormInput.gender" placeholder="Select gender">
-              <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label"
-                :value="gender.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Phone" prop="phone">
-            <el-input class="main-form-input" v-model="dialogFormInput.phone" placeholder="Enter phone number " />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="Job Title" prop="jobTitle">
-            <el-select class="main-form-input" v-model="dialogFormInput.jobTitle" placeholder="Select job title">
-              <el-option v-for="jobTitle in jobTitleOptions" :key="jobTitle.value" :label="jobTitle.label"
-                :value="jobTitle.value" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Salary" prop="salary">
-            <el-input class="main-form-input" v-model="dialogFormInput.salary" placeholder="Enter salary" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="Department" prop="deptId">
-            <el-select class="main-form-input" v-model="dialogFormInput.deptId" placeholder="Select department">
-              <el-option v-for="dept in deptData" :key="dept.id" :label="dept.name" :value="dept.id" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Hire Date" prop="hireDate">
-            <el-date-picker v-model="dialogFormInput.hireDate" type="date" value-format="YYYY-MM-DD"
-              placeholder="Select hire date" style="width: 300px" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-
-      <el-form-item label="Avatar" prop="image">
-        <el-upload class="avatar-uploader" action="/api/upload" :headers="{ 'Authorization': token }"
-          :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-          <img v-if="dialogFormInput.image" :src="dialogFormInput.image" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon">
-            <Plus />
-          </el-icon>
-        </el-upload>
+      <el-form-item label="Name">
+        <el-input v-model="searchForm.name" placeholder="Search by employee name" />
       </el-form-item>
 
-      <el-row>
-        <el-col :span="24">
-          <el-form-item label="Work Experience">
-            <el-button type="success" size="small" @click="handleAddWorkExperience">+ Add Work Experience</el-button>
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <el-form-item label="Gender">
+        <el-select v-model="searchForm.gender" placeholder="Select gender" clearable>
+          <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label" :value="gender.value" />
+        </el-select>
+      </el-form-item>
 
-      <el-row v-for="(workExp, index) in dialogFormInput.workExpList" :gutter="3">
-        <el-col :span="10">
-          <el-form-item label="Period" label-width="90px" size="small" :prop="`workExpList.${index}.periodArr`">
-            <el-date-picker v-model="workExp.periodArr" type="daterange" range-separator="To"
-              start-placeholder="Start date" end-placeholder="End date" value-format="YYYY-MM-DD" size="small" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="Company" label-width="80px" size="small" :prop="`workExpList.${index}.companyName`">
-            <el-input v-model="workExp.companyName" placeholder="Enter company name" size="small" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="Job Title" label-width="80px" size="small" :prop="`workExpList.${index}.jobTitle`">
-            <el-input v-model="workExp.jobTitle" placeholder="Enter job title" size="small" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="danger" size="small" @click="handleDeleteWorkExperience(index)"
-            style="margin-left: 5px;">Delete</el-button>
-        </el-col>
-      </el-row>
+      <el-form-item label="Hire Date">
+        <el-date-picker v-model="searchForm.hireDateArr" type="daterange" range-separator="To"
+          start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" @click="handleSearch">Search</el-button>
+        <el-button @click="handleClear">Clear</el-button>
+      </el-form-item>
     </el-form>
 
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
-          Confirm
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+    <el-button :disabled="disabledFlag" @click="handleAddEmployee" type="primary">+ Add Employee</el-button>
+    <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
+
+    <el-table :data="empTableDate" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column prop="name" label="Name" align="center" />
+      <el-table-column prop="gender" label="Gender" align="center" />
+      <el-table-column prop="image" label="Avatar" align="center">
+        <template #default="{ row }">
+          <el-image v-if="row.image" :src="row.image" fit="fill" style="height: 50px;" />
+          <span v-else>N/A</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="deptName" label="Department" align="center" />
+      <el-table-column prop="jobTitle" label="Job Title" align="center" />
+      <el-table-column prop="hireDate" label="Hire Date" align="center" />
+      <el-table-column prop="updateTime" label="Last Updated" align="center" />
+      <el-table-column fixed="right" label="Operations" min-width="120" align="center">
+        <template #default="{ row }">
+          <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
+            Edit
+          </el-button>
+          <el-button link :disabled="disabledFlag" type="danger" size="small"
+            @click="handleDelete(row.id)">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-pagination v-model:current-page="searchEmployeeRequest.page" v-model:page-size="searchEmployeeRequest.pageSize"
+      :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
+      @size-change="handlePageSizeChange" @current-change="handlePageChange" />
+  </div>
+
+  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="55%" @close="handleCloseDialogForm">
+      <el-form :model="dialogFormInput" label-width="160px" :rules="rules" ref="dialogFormRef">
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Username" prop="username">
+              <el-input class="main-form-input" v-model="dialogFormInput.username"
+                placeholder="Enter username (2-50 characters)" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Name" prop="name">
+              <el-input class="main-form-input" v-model="dialogFormInput.name"
+                placeholder="Enter name (2-50 characters)" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Gender" prop="gender">
+              <el-select class="main-form-input" v-model="dialogFormInput.gender" placeholder="Select gender">
+                <el-option v-for="gender in genderOptions" :key="gender.value" :label="gender.label"
+                  :value="gender.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Phone" prop="phone">
+              <el-input class="main-form-input" v-model="dialogFormInput.phone" placeholder="Enter phone number " />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Job Title" prop="jobTitle">
+              <el-select class="main-form-input" v-model="dialogFormInput.jobTitle" placeholder="Select job title">
+                <el-option v-for="jobTitle in jobTitleOptions" :key="jobTitle.value" :label="jobTitle.label"
+                  :value="jobTitle.value" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Salary" prop="salary">
+              <el-input class="main-form-input" v-model="dialogFormInput.salary" placeholder="Enter salary" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="Department" prop="deptId">
+              <el-select class="main-form-input" v-model="dialogFormInput.deptId" placeholder="Select department">
+                <el-option v-for="dept in deptData" :key="dept.id" :label="dept.name" :value="dept.id" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="Hire Date" prop="hireDate">
+              <el-date-picker v-model="dialogFormInput.hireDate" type="date" value-format="YYYY-MM-DD"
+                placeholder="Select hire date" style="width: 300px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-form-item label="Avatar" prop="image">
+          <el-upload class="avatar-uploader" action="/api/upload" :headers="{ 'Authorization': token }"
+            :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+            <img v-if="dialogFormInput.image" :src="dialogFormInput.image" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon">
+              <Plus />
+            </el-icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="Work Experience">
+              <el-button type="success" size="small" @click="handleAddWorkExperience">+ Add Work Experience</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row v-for="(workExp, index) in dialogFormInput.workExpList" :gutter="3">
+          <el-col :span="10">
+            <el-form-item label="Period" label-width="90px" size="small" :prop="`workExpList.${index}.periodArr`">
+              <el-date-picker v-model="workExp.periodArr" type="daterange" range-separator="To"
+                start-placeholder="Start date" end-placeholder="End date" value-format="YYYY-MM-DD" size="small" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="Company" label-width="80px" size="small" :prop="`workExpList.${index}.companyName`">
+              <el-input v-model="workExp.companyName" placeholder="Enter company name" size="small" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="Job Title" label-width="80px" size="small" :prop="`workExpList.${index}.jobTitle`">
+              <el-input v-model="workExp.jobTitle" placeholder="Enter job title" size="small" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
+            <el-button type="danger" size="small" @click="handleDeleteWorkExperience(index)"
+              style="margin-left: 5px;">Delete</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
+            Confirm
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
 </template>
 
 <style scoped>
+#container {
+  min-height: calc(100vh - 180px);
+}
+
 .searchForm {
   margin-top: 20px;
 }

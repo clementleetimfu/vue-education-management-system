@@ -44,24 +44,30 @@ onMounted(() => {
 
 </script>
 <template>
-  <h1>Activity Log</h1>
+<h1>Activity Log</h1>
 
-  <el-table :data="logTableData" border style="width: 100%">
-    <el-table-column type="index" label="No." width="50" align="center" />
-    <el-table-column prop="operator" label="Operator" width="125" align="center" />
-    <el-table-column prop="operateTime" label="Operate Time" width="175" align="center" />
-    <el-table-column prop="className" label="Class Name" width="300" align="center" />
-    <el-table-column prop="methodName" label="Method Name" width="200" align="center" />
-    <el-table-column prop="duration" label="Time Cost (ms)" width="125" align="center" />
-    <el-table-column prop="methodParams" label="Method Parameters" align="center" />
-    <el-table-column prop="returnValue" label="Return Value" width="300" align="center" />
-  </el-table>
-  <el-pagination v-model:current-page="pageData.page" v-model:page-size="pageData.pageSize" :page-sizes="pageSizes"
-    size="default" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handlePageSizeChange"
-    @current-change="handlePageChange" />
+  <div id="container">
+    <el-table :data="logTableData" border style="width: 100%">
+      <el-table-column type="index" label="No." width="50" align="center" />
+      <el-table-column prop="operator" label="Operator" width="125" align="center" />
+      <el-table-column prop="operateTime" label="Operate Time" width="175" align="center" />
+      <el-table-column prop="className" label="Class Name" width="300" align="center" />
+      <el-table-column prop="methodName" label="Method Name" width="200" align="center" />
+      <el-table-column prop="duration" label="Time Cost (ms)" width="125" align="center" />
+      <el-table-column prop="methodParams" label="Method Parameters" align="center" />
+      <el-table-column prop="returnValue" label="Return Value" width="300" align="center" />
+    </el-table>
+    <el-pagination v-model:current-page="pageData.page" v-model:page-size="pageData.pageSize" :page-sizes="pageSizes"
+      size="default" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handlePageSizeChange"
+      @current-change="handlePageChange" />
+  </div>
 </template>
 
 <style scoped>
+#container {
+  min-height: calc(100vh - 180px);
+}
+
 .el-table {
   margin-top: 20px;
 }
