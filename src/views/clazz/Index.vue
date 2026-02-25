@@ -256,94 +256,100 @@ onMounted(() => {
 
 </script>
 <template>
-  <h1>Class</h1>
+<h1>Class</h1>
 
-  <el-form :inline="true" :model="searchForm" class="searchForm">
+  <div id="container">
+    <el-form :inline="true" :model="searchForm" class="searchForm">
 
-    <el-form-item label="Name">
-      <el-input v-model="searchForm.name" placeholder="Search by class name" />
-    </el-form-item>
-
-    <el-form-item label="Class End Date">
-      <el-date-picker v-model="searchForm.clazzEndDateArr" type="daterange" range-separator="To"
-        start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
-    </el-form-item>
-
-    <el-form-item>
-      <el-button type="primary" @click="handleSearch">Search</el-button>
-      <el-button @click="handleClear">Clear</el-button>
-    </el-form-item>
-  </el-form>
-
-  <el-button :disabled="disabledFlag" class="add-clazz-btn" type="primary" @click="handleAddClazz">+ Add Class</el-button>
-
-  <el-table :data="clazzTableData" border style="width: 100%">
-    <el-table-column type="index" label="No." width="50" align="center" />
-    <el-table-column prop="clazzName" label="Class Name" align="center" />
-    <el-table-column prop="teacherName" label="Teacher Name" width="200" align="center" />
-    <el-table-column prop="startDate" label="Class Start Date" width="150" align="center" />
-    <el-table-column prop="endDate" label="Class End Date" width="150" align="center" />
-    <el-table-column label="Status" width="150" align="center">
-      <template #default="{ row }">
-        <el-tag v-if="now < new Date(row.startDate)" type="success">Scheduled</el-tag>
-        <el-tag v-else-if="now >= new Date(row.startDate) && now <= new Date(row.endDate)"
-          type="primary">Ongoing</el-tag>
-        <el-tag v-else type="danger">Ended</el-tag>
-      </template>
-    </el-table-column>
-    <el-table-column prop="updateTime" label="Update Time" width="200" align="center" />
-    <el-table-column fixed="right" label="Actions" align="center">
-      <template #default="{ row }">
-        <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
-          Edit
-        </el-button>
-        <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
-
-  <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
-    <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules" label-width="auto">
-      <el-form-item label="Class Name" prop="name">
-        <el-input v-model="dialogFormInput.name" placeholder="Enter class name" />
+      <el-form-item label="Name">
+        <el-input v-model="searchForm.name" placeholder="Search by class name" />
       </el-form-item>
-      <el-form-item label="Class Start Date" prop="startDate">
-        <el-date-picker v-model="dialogFormInput.startDate" type="date" placeholder="Select start date"
-          value-format="YYYY-MM-DD" style="width: 500px;" />
+
+      <el-form-item label="Class End Date">
+        <el-date-picker v-model="searchForm.clazzEndDateArr" type="daterange" range-separator="To"
+          start-placeholder="Select start date" end-placeholder="Select end date" value-format="YYYY-MM-DD" />
       </el-form-item>
-      <el-form-item label="Class End Date" prop="endDate">
-        <el-date-picker v-model="dialogFormInput.endDate" type="date" placeholder="Select end date"
-          value-format="YYYY-MM-DD" style="width: 500px;" />
-      </el-form-item>
-      <el-form-item label="Class Teacher" prop="teacherId">
-        <el-select v-model="dialogFormInput.teacherId" placeholder="Select teacher">
-          <el-option v-for="teacher in teacherOptions" :key="teacher.value" :label="teacher.label"
-            :value="teacher.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="Subject" prop="subject">
-        <el-select v-model="dialogFormInput.subject" placeholder="Select subject">
-          <el-option v-for="subject in subjectOptions" :key="subject.value" :label="subject.label"
-            :value="subject.value" />
-        </el-select>
+
+      <el-form-item>
+        <el-button type="primary" @click="handleSearch">Search</el-button>
+        <el-button @click="handleClear">Clear</el-button>
       </el-form-item>
     </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
-          Confirm
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
 
-  <el-pagination v-model:current-page="searchClazzRequest.page" v-model:page-size="searchClazzRequest.pageSize"
-    :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
-    @size-change="handlePageSizeChange" @current-change="handlePageChange" />
+    <el-button :disabled="disabledFlag" class="add-clazz-btn" type="primary" @click="handleAddClazz">+ Add Class</el-button>
+
+    <el-table :data="clazzTableData" border style="width: 100%">
+      <el-table-column type="index" label="No." width="50" align="center" />
+      <el-table-column prop="clazzName" label="Class Name" align="center" />
+      <el-table-column prop="teacherName" label="Teacher Name" width="200" align="center" />
+      <el-table-column prop="startDate" label="Class Start Date" width="150" align="center" />
+      <el-table-column prop="endDate" label="Class End Date" width="150" align="center" />
+      <el-table-column label="Status" width="150" align="center">
+        <template #default="{ row }">
+          <el-tag v-if="now < new Date(row.startDate)" type="success">Scheduled</el-tag>
+          <el-tag v-else-if="now >= new Date(row.startDate) && now <= new Date(row.endDate)"
+            type="primary">Ongoing</el-tag>
+          <el-tag v-else type="danger">Ended</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateTime" label="Update Time" width="200" align="center" />
+      <el-table-column fixed="right" label="Actions" align="center">
+        <template #default="{ row }">
+          <el-button link :disabled="disabledFlag" type="primary" size="small" @click="handleEdit(row.id)">
+            Edit
+          </el-button>
+          <el-button link :disabled="disabledFlag" type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="30%" @close="handleCloseDialogForm">
+      <el-form :model="dialogFormInput" ref="dialogFormRef" :rules="rules" label-width="auto">
+        <el-form-item label="Class Name" prop="name">
+          <el-input v-model="dialogFormInput.name" placeholder="Enter class name" />
+        </el-form-item>
+        <el-form-item label="Class Start Date" prop="startDate">
+          <el-date-picker v-model="dialogFormInput.startDate" type="date" placeholder="Select start date"
+            value-format="YYYY-MM-DD" style="width: 500px;" />
+        </el-form-item>
+        <el-form-item label="Class End Date" prop="endDate">
+          <el-date-picker v-model="dialogFormInput.endDate" type="date" placeholder="Select end date"
+            value-format="YYYY-MM-DD" style="width: 500px;" />
+        </el-form-item>
+        <el-form-item label="Class Teacher" prop="teacherId">
+          <el-select v-model="dialogFormInput.teacherId" placeholder="Select teacher">
+            <el-option v-for="teacher in teacherOptions" :key="teacher.value" :label="teacher.label"
+              :value="teacher.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Subject" prop="subject">
+          <el-select v-model="dialogFormInput.subject" placeholder="Select subject">
+            <el-option v-for="subject in subjectOptions" :key="subject.value" :label="subject.label"
+              :value="subject.value" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="handleDialogFormSubmit(dialogFormTitle)">
+            Confirm
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <el-pagination v-model:current-page="searchClazzRequest.page" v-model:page-size="searchClazzRequest.pageSize"
+      :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
+      @size-change="handlePageSizeChange" @current-change="handlePageChange" />
+  </div>
 </template>
 
 <style scoped>
+#container {
+  min-height: calc(100vh - 180px);
+}
+
 .searchForm {
   margin-top: 20px;
 }

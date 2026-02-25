@@ -313,58 +313,60 @@ onMounted(() => {
 
 </script>
 <template>
-  <h1>Student</h1>
+<h1>Student</h1>
 
-  <el-form :inline="true" :model="searchForm" class="searchForm">
+  <div id="container">
+    <el-form :inline="true" :model="searchForm" class="searchForm">
 
-    <el-form-item label="Name">
-      <el-input v-model="searchForm.name" placeholder="Search by student name" />
-    </el-form-item>
+      <el-form-item label="Name">
+        <el-input v-model="searchForm.name" placeholder="Search by student name" />
+      </el-form-item>
 
-    <el-form-item label="Education Level">
-      <el-select v-model="searchForm.educationLevel" placeholder="Select education level" clearable
-        style="width: 300px;">
-        <el-option v-for="edu in educationOptions" :key="edu.value" :label="edu.label" :value="edu.value" />
-      </el-select>
-    </el-form-item>
+      <el-form-item label="Education Level">
+        <el-select v-model="searchForm.educationLevel" placeholder="Select education level" clearable
+          style="width: 300px;">
+          <el-option v-for="edu in educationOptions" :key="edu.value" :label="edu.label" :value="edu.value" />
+        </el-select>
+      </el-form-item>
 
-    <el-form-item label="Class">
-      <el-select v-model="searchForm.clazzId" placeholder="Select class" clearable>
-        <el-option v-for="clazz in clazzOptions" :key="clazz.value" :label="clazz.label" :value="clazz.value" />
-      </el-select>
-    </el-form-item>
+      <el-form-item label="Class">
+        <el-select v-model="searchForm.clazzId" placeholder="Select class" clearable>
+          <el-option v-for="clazz in clazzOptions" :key="clazz.value" :label="clazz.label" :value="clazz.value" />
+        </el-select>
+      </el-form-item>
 
-    <el-form-item>
-      <el-button type="primary" @click="handleSearch">Search</el-button>
-      <el-button @click="handleClear">Clear</el-button>
-    </el-form-item>
-  </el-form>
+      <el-form-item>
+        <el-button type="primary" @click="handleSearch">Search</el-button>
+        <el-button @click="handleClear">Clear</el-button>
+      </el-form-item>
+    </el-form>
 
-  <el-button :disabled="disabledFlag" @click="handleAddStudent" type="primary">+ Add Student</el-button>
-  <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
+    <el-button :disabled="disabledFlag" @click="handleAddStudent" type="primary">+ Add Student</el-button>
+    <el-button :disabled="disabledFlag" @click="handleDeleteSelected" type="danger">- Delete Selected</el-button>
 
-  <el-table :data="studentTableData" border style="width: 100%" @selection-change="handleSelectionChange">
-    <el-table-column type="selection" width="55" align="center" />
-    <el-table-column prop="name" label="Name" align="center" />
-    <el-table-column prop="no" label="No" align="center" />
-    <el-table-column prop="gender" label="Gender" align="center" />
-    <el-table-column prop="educationLevel" label="Education Level" align="center" />
-    <el-table-column prop="clazzName" width="400" label="Class" align="center" />
-    <el-table-column prop="intakeDate" label="Intake Date" align="center" />
-    <el-table-column prop="updateTime" label="Last Updated" align="center" />
-    <el-table-column fixed="right" label="Operations" min-width="120" align="center">
-      <template #default="{ row }">
-        <el-button :disabled="disabledFlag" link type="primary" size="small" @click="handleEdit(row.id)">
-          Edit
-        </el-button>
-        <el-button :disabled="disabledFlag" link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+    <el-table :data="studentTableData" border style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column prop="name" label="Name" align="center" />
+      <el-table-column prop="no" label="No" align="center" />
+      <el-table-column prop="gender" label="Gender" align="center" />
+      <el-table-column prop="educationLevel" label="Education Level" align="center" />
+      <el-table-column prop="clazzName" width="400" label="Class" align="center" />
+      <el-table-column prop="intakeDate" label="Intake Date" align="center" />
+      <el-table-column prop="updateTime" label="Last Updated" align="center" />
+      <el-table-column fixed="right" label="Operations" min-width="120" align="center">
+        <template #default="{ row }">
+          <el-button :disabled="disabledFlag" link type="primary" size="small" @click="handleEdit(row.id)">
+            Edit
+          </el-button>
+          <el-button :disabled="disabledFlag" link type="danger" size="small" @click="handleDelete(row.id)">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-  <el-pagination v-model:current-page="searchStudentRequest.page" v-model:page-size="searchStudentRequest.pageSize"
-    :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
-    @size-change="handlePageSizeChange" @current-change="handlePageChange" />
+    <el-pagination v-model:current-page="searchStudentRequest.page" v-model:page-size="searchStudentRequest.pageSize"
+      :page-sizes="pageSizes" size="default" layout="total, sizes, prev, pager, next, jumper" :total="total"
+      @size-change="handlePageSizeChange" @current-change="handlePageChange" />
+  </div>
 
   <el-dialog v-model="dialogFormVisible" :title="dialogFormTitle" width="60%" @close="handleCloseDialogForm">
     <el-form :model="dialogFormInput" label-width="150px" :rules="rules" ref="dialogFormRef">
@@ -459,6 +461,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
+#container {
+  min-height: calc(100vh - 180px);
+}
+
 .searchForm {
   margin-top: 20px;
 }
