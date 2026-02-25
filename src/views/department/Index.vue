@@ -126,7 +126,7 @@ const handleDialogFormSubmit = async (type: string) => {
 <template>
 <h1>Department</h1>
 
-  <div id="container">
+  <div>
     <el-button class="add-dept-btn" :disabled="disabledFlag" type="primary" @click="handleAddDepartment">+ Add Department</el-button>
 
     <el-table :data="deptTableData" border style="width: 100%">
@@ -163,9 +163,6 @@ const handleDialogFormSubmit = async (type: string) => {
 </template>
 
 <style scoped>
-#container {
-  min-height: calc(100vh - 180px);
-}
 
 .add-dept-btn {
   margin: 20px 0;

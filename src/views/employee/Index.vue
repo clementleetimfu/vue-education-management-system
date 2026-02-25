@@ -380,7 +380,7 @@ onMounted(() => {
 <template>
   <h1>Employee</h1>
 
-  <div id="container">
+  <div>
     <el-form :inline="true" :model="searchForm" class="searchForm">
 
       <el-form-item label="Name">
@@ -557,9 +557,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#container {
-  min-height: calc(100vh - 180px);
-}
 
 .searchForm {
   margin-top: 20px;

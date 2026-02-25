@@ -46,7 +46,7 @@ onMounted(() => {
 <template>
 <h1>Activity Log</h1>
 
-  <div id="container">
+  <div>
     <el-table :data="logTableData" border style="width: 100%">
       <el-table-column type="index" label="No." width="50" align="center" />
       <el-table-column prop="operator" label="Operator" width="125" align="center" />
@@ -64,9 +64,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-#container {
-  min-height: calc(100vh - 180px);
-}
 
 .el-table {
   margin-top: 20px;
