@@ -164,11 +164,11 @@ onMounted(() => {
 <style scoped>
 #container {
   margin-top: 20px;
-  height: 100%;
+  min-height: calc(100vh - 180px);
 }
 
 .el-row {
-  height: 100%;
+  min-height: calc(100vh - 180px);
 }
 
 .el-col {
@@ -178,7 +178,7 @@ onMounted(() => {
 }
 
 .dashboard-container {
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 400px;
 }
 </style>

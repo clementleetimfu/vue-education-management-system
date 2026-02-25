@@ -380,6 +380,13 @@ const handleLogout = () => {
   padding: 8px;
 }
 
+:deep(.el-dropdown-menu) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
 :deep(.el-dropdown-menu__item) {
   padding: 12px 20px;
   border-radius: 10px;
