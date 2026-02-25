@@ -1,4 +1,5 @@
 import * as echarts from 'echarts';
+import type { EChartsOption } from 'echarts';
 import { useThemeStore } from '@/stores/theme';
 
 export const getChartTheme = () => {
@@ -20,15 +21,15 @@ export const getBarChartOption = (
   xData: string[],
   yData: number[],
   gradientColors: [string, string]
-) => {
+): EChartsOption => {
   const theme = getChartTheme();
 
   return {
     backgroundColor: 'transparent',
     tooltip: {
-      trigger: 'axis',
+      trigger: 'axis' as const,
       axisPointer: {
-        type: 'shadow'
+        type: 'shadow' as const
       },
       backgroundColor: theme.tooltipBg,
       borderColor: theme.tooltipBorder,
@@ -44,7 +45,7 @@ export const getBarChartOption = (
     },
     xAxis: [
       {
-        type: 'category',
+        type: 'category' as const,
         data: xData,
         axisTick: {
           alignWithLabel: true
@@ -63,7 +64,7 @@ export const getBarChartOption = (
     ],
     yAxis: [
       {
-        type: 'value',
+        type: 'value' as const,
         axisLabel: {
           color: theme.textMuted
         },
@@ -75,7 +76,7 @@ export const getBarChartOption = (
         splitLine: {
           lineStyle: {
             color: theme.splitLineColor,
-            type: 'dashed'
+            type: 'dashed' as const
           }
         }
       }
@@ -83,7 +84,7 @@ export const getBarChartOption = (
     series: [
       {
         name: 'Count',
-        type: 'bar',
+        type: 'bar' as const,
         barWidth: '60%',
         data: yData,
         itemStyle: {
@@ -99,13 +100,13 @@ export const getBarChartOption = (
 
 export const getPieChartOption = (
   data: { value: number; name: string; itemStyle?: any }[]
-) => {
+): EChartsOption => {
   const theme = getChartTheme();
 
   return {
     backgroundColor: 'transparent',
     tooltip: {
-      trigger: 'item',
+      trigger: 'item' as const,
       backgroundColor: theme.tooltipBg,
       borderColor: theme.tooltipBorder,
       textStyle: {
@@ -122,7 +123,7 @@ export const getPieChartOption = (
     series: [
       {
         name: 'Data',
-        type: 'pie',
+        type: 'pie' as const,
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
         label: {
@@ -133,7 +134,7 @@ export const getPieChartOption = (
           label: {
             show: true,
             fontSize: 40,
-            fontWeight: 'bold',
+            fontWeight: 'bold' as const,
             color: theme.textColor
           }
         },
