@@ -88,8 +88,8 @@ const initEmpJobTitleCountChart = () => {
         data: empJobTitleCountData.jobTitleCountList,
         itemStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#1890ff' },
-            { offset: 1, color: '#162640' }
+            { offset: 0, color: '#3b82f6' },
+            { offset: 1, color: '#1d4ed8' }
           ])
         }
       }
@@ -111,13 +111,13 @@ const initEmpGenderCountChart = () => {
       itemStyle: {
         color: item.gender === 'Male'
           ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#4da6ff' },
-            { offset: 1, color: '#0050b3' }
+            { offset: 0, color: '#3b82f6' },
+            { offset: 1, color: '#1d4ed8' }
           ])
           : item.gender === 'Female'
             ? new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-              { offset: 0, color: '#ffb3d9' },
-              { offset: 1, color: '#ff66b3' }
+              { offset: 0, color: '#f472b6' },
+              { offset: 1, color: '#db2777' }
             ])
             : undefined
       }
@@ -133,7 +133,7 @@ const initEmpGenderCountChart = () => {
     },
     series: [
       {
-        name: 'Access From',
+        name: 'Gender',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,

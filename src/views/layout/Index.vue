@@ -368,6 +368,8 @@ const handleLogout = () => {
   background: var(--main-bg);
   padding: 24px;
   transition: background 0.4s ease;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
 }
 
 .glass-dropdown {

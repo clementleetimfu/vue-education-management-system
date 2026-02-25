@@ -85,8 +85,8 @@ const initStudentCountByClazzChart = () => {
         data: studentCountByClazzData.studentCountList,
         itemStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#1890ff' },
-            { offset: 1, color: '#162640' }
+            { offset: 0, color: '#f97316' },
+            { offset: 1, color: '#ea580c' }
           ])
         }
       }
@@ -111,7 +111,7 @@ const initStudentEduLevelCountChart = () => {
     },
     series: [
       {
-        name: 'Access From',
+        name: 'Education Level',
         type: 'pie',
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
@@ -129,9 +129,12 @@ const initStudentEduLevelCountChart = () => {
         labelLine: {
           show: false
         },
-        data: studentEduLevelCountData.value.map((item) => ({
+        data: studentEduLevelCountData.value.map((item, index) => ({
           value: item.count,
           name: item.educationLevel,
+          itemStyle: {
+            color: ['#f97316', '#fb923c', '#fbbf24', '#ef4444', '#ec4899'][index % 5]
+          }
         }))
       }
     ]

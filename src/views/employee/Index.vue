@@ -31,7 +31,7 @@ const searchForm = reactive<SearchForm>({
 const empTableDate = ref<SearchEmployeeResponse[]>([]);
 const searchEmployeeRequest = reactive<SearchEmployeeRequest>({
   page: 1,
-  pageSize: 10,
+  pageSize: 5,
   name: '',
   gender: '',
   startDate: '',
@@ -39,7 +39,7 @@ const searchEmployeeRequest = reactive<SearchEmployeeRequest>({
 })
 
 const total = ref<number>(0);
-const pageSizes = ref<number[]>([10, 20, 25, 50, 100]);
+const pageSizes = ref<number[]>([5, 10, 20, 25, 50, 100]);
 const selectedIds = ref<number[]>([]);
 const dialogFormVisible = ref<boolean>(false);
 const dialogFormTitle = ref<string>('');

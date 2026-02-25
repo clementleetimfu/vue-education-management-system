@@ -75,12 +75,12 @@ const rules = reactive({
 
 const clazzOptions = ref<{ label: string; value: number }[]>([]);
 const educationOptions = ref<{ label: string; value: number }[]>([]);
-const pageSizes = ref<number[]>([10, 20, 25, 50, 100]);
+const pageSizes = ref<number[]>([5, 10, 20, 25, 50, 100]);
 const total = ref<number>(0);
 const studentTableData = ref<SearchStudentResponse[]>([]);
 const searchStudentRequest = reactive<SearchStudentRequest>({
   page: 1,
-  pageSize: 10,
+  pageSize: 5,
   name: '',
   educationLevel: null,
   clazzId: null
