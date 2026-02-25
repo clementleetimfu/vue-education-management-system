@@ -45,6 +45,7 @@ The Vue Education Management System is a frontend application that provides a co
 | Feature | Description |
 |---------|-------------|
 | **Authentication** | JWT-based login with first-time password reset (min 10 chars) |
+| **Dark/Light Theme** | Toggle between dark and light modes with localStorage persistence |
 | **Employee Management** | Full CRUD with work experience tracking and search |
 | **Student Management** | Complete student records with education levels and class assignment |
 | **Department Management** | Organizational structure management |
@@ -67,6 +68,7 @@ The Vue Education Management System is a frontend application that provides a co
 | [Pinia](https://pinia.vuejs.org/) | ^3.0.4 | State management |
 | [pinia-plugin-persistedstate](https://github.com/prazdevs/pinia-plugin-persistedstate) | ^4.7.1 | State persistence |
 | [Element Plus](https://element-plus.org/) | ^2.11.9 | Vue 3 UI framework |
+| [Element Plus Icons](https://element-plus.org/en-US/component/icon.html) | ^2.3.2 | Icon set for Element Plus |
 | [Axios](https://axios-http.com/) | ^1.13.2 | HTTP client |
 | [ECharts](https://echarts.apache.org/) | ^6.0.0 | Data visualization |
 
@@ -136,15 +138,19 @@ vue-education-management-system/
 │   ├── assets/                  # Assets
 │   │   ├── login-background.jpg
 │   │   └── main.css             # Global styles
+│   ├── components/              # Reusable components
+│   │   └── ThemeToggle.vue      # Dark/light theme toggle switch
 │   ├── constants/               # Constants
 │   │   └── role.ts              # Role enum (ROLE_ADMIN, ROLE_EMPLOYEE)
 │   ├── router/                  # Router
 │   │   └── index.ts             # Route configuration & guards
 │   ├── stores/                  # Pinia stores
-│   │   └── emp.ts               # Employee state with persistence
+│   │   ├── emp.ts               # Employee state with persistence
+│   │   └── theme.ts             # Theme state (dark/light mode)
 │   ├── utils/                   # Utilities
 │   │   ├── permission.ts        # Permission utilities (isDisabled)
-│   │   └── request.ts           # Axios instance with interceptors
+│   │   ├── request.ts           # Axios instance with interceptors
+│   │   └── chartTheme.ts        # ECharts theme configuration
 │   ├── views/                   # Page components
 │   │   ├── clazz/               # Class management
 │   │   ├── dashboard/           # Dashboards (Emp/Student)
@@ -231,10 +237,11 @@ router.beforeEach((to, from, next) => {
 
 ## State Management
 
-### Pinia Store
+### Pinia Stores
 
-**Location:** `src/stores/emp.ts`
+The application uses two Pinia stores:
 
+**Employee Store:** `src/stores/emp.ts`
 ```typescript
 export const useEmployeeStore = defineStore('employee', {
   state: () => ({
@@ -253,15 +260,43 @@ export const useEmployeeStore = defineStore('employee', {
 })
 ```
 
+**Theme Store:** `src/stores/theme.ts`
+```typescript
+export const useThemeStore = defineStore('theme', () => {
+  const isDark = ref<boolean>(false)
+
+  const initTheme = () => {
+    const saved = localStorage.getItem('theme')
+    isDark.value = saved === 'dark'
+    applyTheme()
+  }
+
+  const toggleTheme = () => {
+    isDark.value = !isDark.value
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+    applyTheme()
+  }
+
+  return { isDark, initTheme, toggleTheme }
+})
+```
+
 ### Usage
 
 ```typescript
 import { useEmployeeStore } from '@/stores/emp'
+import { useThemeStore } from '@/stores/theme'
 
+// Employee store
 const empStore = useEmployeeStore()
 empStore.setUsername('admin')
 empStore.setId(1)
 empStore.setRoleName('ROLE_ADMIN')
+
+// Theme store
+const themeStore = useThemeStore()
+themeStore.initTheme()  // Initialize on app mount
+themeStore.toggleTheme() // Toggle dark/light mode
 ```
 
 ---
@@ -412,7 +447,7 @@ const rules = {
 **Location:** `src/views/layout/Index.vue`
 
 The main layout contains:
-- **Header** - App title and user dropdown (Change Password, Logout)
+- **Header** - App title, theme toggle, and user dropdown (Change Password, Logout)
 - **Sidebar** - Navigation menu with grouped items
 - **Main Content** - Router view for page content
 
@@ -428,6 +463,28 @@ Academic
   ├── Class
   └── Student
 Log (admin only)
+```
+
+### Theme Toggle Component
+
+**Location:** `src/components/ThemeToggle.vue`
+
+A custom toggle switch component that allows users to switch between dark and light themes:
+- Smooth animated transition with cubic-bezier easing
+- Persists theme preference in localStorage
+- Integrates with theme store for global state management
+
+```typescript
+// Theme store - src/stores/theme.ts
+export const useThemeStore = defineStore('theme', () => {
+  const isDark = ref<boolean>(false)
+  const initTheme = () => { /* ... */ }
+  const toggleTheme = () => {
+    isDark.value = !isDark.value
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+  }
+  return { isDark, initTheme, toggleTheme }
+})
 ```
 
 ### Login Component
@@ -459,24 +516,66 @@ All charts use **ECharts** with gradient color styling.
 ### Theme Colors
 
 ```css
---primary-dark: #162640
---primary-light: #1e3a5f
---accent: #4FC3F7
---background: #f5f7fa
+/* Light Theme (Default) */
+--font-display: 'Outfit', sans-serif;    /* Display font */
+--font-body: 'DM Sans', sans-serif;       /* Body font */
+--accent: #f97316;                        /* Orange accent */
+--accent-hover: #ea580c;
+--glass-bg: rgba(255, 255, 255, 0.7);    /* Glass morphism */
+--glass-border: rgba(148, 163, 184, 0.3);
+--text-primary: #0f172a;
+--text-secondary: #475569;
+
+/* Dark Theme */
+--accent: #fb923c;                       /* Lighter orange for dark mode */
+--bg-primary: #1a1a1a;
+--text-primary: #f5f5f5;
+--text-secondary: #d4d4d4;
 ```
 
 ### Global Styles
 
 **Location:** `src/assets/main.css`
 
+The app uses CSS custom properties for theming and glass morphism effects:
+
 ```css
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@100..900&display=swap');
+
+:root, .light {
+  --font-display: 'Outfit', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --accent: #f97316;
+}
+
 * {
-  margin: 0px;
-  font-family: "Segoe UI", "Helvetica Neue", "Roboto", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html, body, #app {
   height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
 }
 ```
 
@@ -484,6 +583,7 @@ html, body, #app {
 
 Each `.vue` file uses scoped styles with:
 - CSS custom properties for theming
+- Glass morphism effects with backdrop-filter
 - Smooth transitions on interactive elements
 - Gradient backgrounds for depth
 - Hover effects for better UX
@@ -495,11 +595,15 @@ The app uses Element Plus components with custom styling via deep selectors:
 ```vue
 <style scoped>
 ::v-deep(.el-menu-item.is-active) {
-  background: linear-gradient(135deg, #4FC3F7 0%, #29b6f6 100%) !important;
-  color: #162640 !important;
+  background: var(--accent-light) !important;
+  color: var(--accent) !important;
+  font-weight: 600;
+  border: 1px solid var(--accent);
 }
 </style>
 ```
+
+The primary accent color is **orange** (#f97316), applied globally via CSS variables.
 
 ---
 
@@ -539,8 +643,6 @@ Output: `dist/` directory with static files
 
 ## Backend Integration
 
-### Connected Backend
-
 **Repository:** [Java Backend](https://github.com/clementleetimfu/java-education-management-system)
 
 ### API Endpoints
@@ -555,10 +657,3 @@ Output: `dist/` directory with static files
 | **Dashboard** | `GET /emps/jobTitle/count`, `GET /emps/gender/count`, `GET /students/clazz/count`, `GET /students/edu-level/count` |
 | **Logs** | `GET /logs` |
 | **Reference** | `GET /edu-levels`, `GET /jobs`, `GET /subjects` |
-
----
-
-## Document Version
-
-- **Version**: 1.0
-- **Last Updated**: 2026-01-01
