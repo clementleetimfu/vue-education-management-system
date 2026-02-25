@@ -3,8 +3,12 @@ import type { ApiResponse } from '@/api/common';
 import { findEmpJobTitleCount, findEmpGenderCount } from '@/api/empDash';
 import type { EmpJobTitleCountResponse, EmpGenderCountResponse } from '@/api/empDash';
 import { ElMessage } from 'element-plus';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import * as echarts from 'echarts';
+import { getBarChartOption, getPieChartOption } from '@/utils/chartTheme';
+import { useThemeStore } from '@/stores/theme';
+
+const themeStore = useThemeStore();
 
 const empJobTitleCountData = reactive<EmpJobTitleCountResponse>({
   jobTitleList: [],
@@ -50,51 +54,12 @@ const initEmpJobTitleCountChart = () => {
   var myChart = echarts.init(chartDom);
   var option: EChartsOption;
 
-  option = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: empJobTitleCountData.jobTitleList,
-        axisTick: {
-          alignWithLabel: true
-        },
-        axisLabel: {
-          rotate: 20,
-        }
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value'
-      }
-    ],
-    series: [
-      {
-        name: 'Count',
-        type: 'bar',
-        barWidth: '60%',
-        data: empJobTitleCountData.jobTitleCountList,
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#3b82f6' },
-            { offset: 1, color: '#1d4ed8' }
-          ])
-        }
-      }
-    ]
-  };
+  option = getBarChartOption(
+    empJobTitleCountData.jobTitleList,
+    empJobTitleCountData.jobTitleCountList,
+    ['#3b82f6', '#1d4ed8']
+  );
+  
   option && myChart.setOption(option);
 }
 
@@ -121,47 +86,21 @@ const initEmpGenderCountChart = () => {
             ])
             : undefined
       }
-    })) : [{ value: 0, name: 'No Data' }]
+    })) : [{ value: 0, name: 'No Data' }];
 
-  option = {
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'Gender',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: 'bold'
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        data: data
-      }
-    ]
-  };
+  option = getPieChartOption(data);
   option && myChart.setOption(option);
 }
 
 onMounted(() => {
   getEmpJobTitleCount();
   getEmpGenderCount();
-})
+});
+
+watch(() => themeStore.isDark, () => {
+  getEmpJobTitleCount();
+  getEmpGenderCount();
+});
 
 </script>
 <template>

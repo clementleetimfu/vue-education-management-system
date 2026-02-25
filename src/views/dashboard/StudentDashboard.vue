@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import type { ApiResponse } from '@/api/common';
 import { ElMessage } from 'element-plus';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import * as echarts from 'echarts';
 import { findStudentCountByClazz, findStudentEduLevelCount, type StudentCountByClazzResponse, type StudentEduLevelCountResponse } from '@/api/studentDash';
+import { getBarChartOption, getPieChartOption } from '@/utils/chartTheme';
+import { useThemeStore } from '@/stores/theme';
+
+const themeStore = useThemeStore();
 
 const studentCountByClazzData = reactive<StudentCountByClazzResponse>({
   clazzNameList: [],
@@ -47,51 +51,12 @@ const initStudentCountByClazzChart = () => {
   var myChart = echarts.init(chartDom);
   var option: EChartsOption;
 
-  option = {
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: studentCountByClazzData.clazzNameList,
-        axisTick: {
-          alignWithLabel: true
-        },
-        axisLabel: {
-          rotate: 20,
-        }
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value'
-      }
-    ],
-    series: [
-      {
-        name: 'Count',
-        type: 'bar',
-        barWidth: '60%',
-        data: studentCountByClazzData.studentCountList,
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [
-            { offset: 0, color: '#f97316' },
-            { offset: 1, color: '#ea580c' }
-          ])
-        }
-      }
-    ]
-  };
+  option = getBarChartOption(
+    studentCountByClazzData.clazzNameList,
+    studentCountByClazzData.studentCountList,
+    ['#f97316', '#ea580c']
+  );
+  
   option && myChart.setOption(option);
 }
 
@@ -101,51 +66,27 @@ const initStudentEduLevelCountChart = () => {
   var myChart = echarts.init(chartDom);
   var option: EChartsOption;
 
-  option = {
-    tooltip: {
-      trigger: 'item'
-    },
-    legend: {
-      top: '5%',
-      left: 'center'
-    },
-    series: [
-      {
-        name: 'Education Level',
-        type: 'pie',
-        radius: ['40%', '70%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: false,
-          position: 'center'
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 40,
-            fontWeight: 'bold'
-          }
-        },
-        labelLine: {
-          show: false
-        },
-        data: studentEduLevelCountData.value.map((item, index) => ({
-          value: item.count,
-          name: item.educationLevel,
-          itemStyle: {
-            color: ['#f97316', '#fb923c', '#fbbf24', '#ef4444', '#ec4899'][index % 5]
-          }
-        }))
-      }
-    ]
-  };
+  const pieData = studentEduLevelCountData.value.map((item, index) => ({
+    value: item.count,
+    name: item.educationLevel,
+    itemStyle: {
+      color: ['#f97316', '#fb923c', '#fbbf24', '#ef4444', '#ec4899'][index % 5]
+    }
+  }));
+
+  option = getPieChartOption(pieData);
   option && myChart.setOption(option);
 }
 
 onMounted(() => {
   getStudentCountByClazz();
   getStudentEduLevelCount();
-})
+});
+
+watch(() => themeStore.isDark, () => {
+  getStudentCountByClazz();
+  getStudentEduLevelCount();
+});
 
 </script>
 <template>
