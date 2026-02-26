@@ -46,6 +46,9 @@ The Vue Education Management System is a frontend application for administering 
 
 ## Demo & Screenshots
 
+**Video Demo**
+[pending]
+
 ### Login
 
 | Light Mode | Dark Mode |
@@ -192,16 +195,18 @@ The router implements navigation guards:
 
 ```typescript
 router.beforeEach((to, from, next) => {
+  const disabledFlag = ref<boolean>(isDisabled());
   const isLoggedIn = !!sessionStorage.getItem('token')
-  const isAdmin = !isDisabled()
 
   if (to.meta.requiresAuth && !isLoggedIn) {
     next({ path: '/login', query: { redirect: to.fullPath } })
-  } else if (to.meta.requiresAdmin && !isAdmin) {
-    next({ path: '/' })
-  } else {
-    next()
   }
+
+  if (to.meta.requiresAdmin && disabledFlag.value) {
+    return next({ path: '/' });
+  }
+
+  next()
 })
 ```
 
@@ -244,13 +249,37 @@ export const useEmployeeStore = defineStore('employee', {
 **Theme Store:** `src/stores/theme.ts`
 ```typescript
 export const useThemeStore = defineStore('theme', () => {
-  const isDark = ref<boolean>(false)
+  const isDark = ref<boolean>(false);
+
+  const initTheme = () => {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      isDark.value = saved === 'dark';
+    } else {
+      isDark.value = false;
+    }
+    applyTheme();
+  };
+
+  const applyTheme = () => {
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(isDark.value ? 'dark' : 'light');
+  };
+
   const toggleTheme = () => {
-    isDark.value = !isDark.value
-    localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-  }
-  return { isDark, toggleTheme }
-})
+    isDark.value = !isDark.value;
+    localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
+    applyTheme();
+  };
+
+  watch(isDark, applyTheme);
+
+  return {
+    isDark,
+    initTheme,
+    toggleTheme,
+  };
+});
 ```
 
 ### Error Handling
@@ -325,7 +354,7 @@ interface PageResult<T> {
 | **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps` |
 | **Students** | `GET /students/search`, `GET /students/{id}`, `POST /students`, `PUT /students`, `DELETE /students` |
 | **Departments** | `GET /depts`, `POST /depts`, `PUT /depts`, `DELETE /depts/{id}` |
-| **Classes** | `GET /clazz/search`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` |
+| **Classes** | `GET /clazz/search`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` (note: actual API uses `PUT clazz` without leading `/`) |
 | **Dashboard** | `GET /emps/jobTitle/count`, `GET /emps/gender/count`, `GET /students/clazz/count`, `GET /students/edu-level/count` |
 | **Logs** | `GET /logs` |
 | **Reference** | `GET /edu-levels`, `GET /jobs`, `GET /subjects` |
@@ -377,18 +406,18 @@ vue-education-management-system/
 ```bash
 git clone <repository-url>
 cd vue-education-management-system
-npm install
+pnpm install
 ```
 
 ### Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start development server (http://localhost:5173) |
-| `npm run build` | Type check and build for production |
-| `npm run build-only` | Build only (skip type-check) |
-| `npm run preview` | Preview production build |
-| `npm run type-check` | Run vue-tsc type checking |
+| `pnpm dev` | Start development server (http://localhost:5173) |
+| `pnpm build` | Type check and build for production |
+| `pnpm build-only` | Build only (skip type-check) |
+| `pnpm preview` | Preview production build |
+| `pnpm type-check` | Run vue-tsc type checking |
 
 ---
 
@@ -417,7 +446,7 @@ export default defineConfig({
 ### Production Build
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Output: `dist/` directory with static files
@@ -431,7 +460,7 @@ Output: `dist/` directory with static files
 | **CORS errors** | Ensure backend runs on localhost:8080 |
 | **401 after login** | Clear sessionStorage and re-login |
 | **Theme not persisting** | Check localStorage theme key |
-| **TypeScript errors** | Run `npm run type-check` |
+| **TypeScript errors** | Run `pnpm type-check` |
 | **Port 5173 in use** | Stop other processes or change port |
 
 ### Debugging Tips
@@ -446,9 +475,9 @@ Output: `dist/` directory with static files
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/xxx`
-3. Install dependencies: `npm install`
-4. Run development: `npm run dev`
-5. Type-check before committing: `npm run type-check`
+3. Install dependencies: `pnpm install`
+4. Run development: `pnpm dev`
+5. Type-check before committing: `pnpm type-check`
 6. Submit pull request
 
 ### Code Standards
