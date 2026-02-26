@@ -46,7 +46,7 @@ The Vue Education Management System is a frontend application for administering 
 
 ## Demo & Screenshots
 
-https://github.com/user-attachments/assets/bdc8a658-fd81-4123-82d4-74b32099f117
+**Video Demo:** [Video Demo](https://youtu.be/uLk7wINbTYo)
 
 ### Login
 
