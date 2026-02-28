@@ -169,7 +169,7 @@ User enters credentials
 ### Password Validation
 
 ```typescript
-const rules = {
+const rules = reactive({
   password: [
     { required: true, message: 'Password is required', trigger: 'blur' },
     { min: 10, message: 'Password length at least 10 characters', trigger: 'blur' }
@@ -177,7 +177,7 @@ const rules = {
   confirmPassword: [
     { required: true, message: 'Confirm password is required', trigger: 'blur' },
     {
-      validator: (_, value: string) => {
+      validator: async (_: any, value: string) => {
         if (value !== dialogFormInput.password) {
           throw new Error('Passwords do not match')
         }
@@ -185,7 +185,7 @@ const rules = {
       trigger: 'change'
     }
   ]
-}
+})
 ```
 
 ### Route Guards
@@ -213,6 +213,7 @@ router.beforeEach((to, from, next) => {
 
 | Path | Component | Auth Required | Admin Required |
 |------|-----------|---------------|----------------|
+| `/` | Layout (redirects to `/dash-emp`) | No | No |
 | `/login` | Login | No | No |
 | `/dash-emp` | Employee Dashboard | Yes | No |
 | `/dash-student` | Student Dashboard | Yes | No |
@@ -324,10 +325,26 @@ const handleSubmit = async (): Promise<void> => {
 - **Response Interceptor:** Handles 401 errors with redirect to login
 
 ```typescript
-request.interceptors.request.use((config) => {
-  config.headers.Authorization = 'Bearer ' + sessionStorage.getItem('token')
-  return config
-})
+// Request Interceptor - Adds JWT token
+request.interceptors.request.use(
+  (config) => {
+    config.headers.Authorization = 'Bearer ' + sessionStorage.getItem('token')
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response Interceptor - Handles errors
+request.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      router.push('/login')
+      ElMessage.error('Session expired. Please login again')
+    }
+    return Promise.reject(error)
+  }
+)
 ```
 
 ### Response Format
@@ -350,10 +367,10 @@ interface PageResult<T> {
 | Module | Endpoints |
 |--------|-----------|
 | **Auth** | `POST /auth/login`, `POST /auth/update-password`, `POST /auth/logout` |
-| **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps` |
+| **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps`, `GET /emps/teachers` |
 | **Students** | `GET /students/search`, `GET /students/{id}`, `POST /students`, `PUT /students`, `DELETE /students` |
 | **Departments** | `GET /depts`, `POST /depts`, `PUT /depts`, `DELETE /depts/{id}` |
-| **Classes** | `GET /clazz/search`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` (note: actual API uses `PUT clazz` without leading `/`) |
+| **Classes** | `GET /clazz/search`, `GET /clazz`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` |
 | **Dashboard** | `GET /emps/jobTitle/count`, `GET /emps/gender/count`, `GET /students/clazz/count`, `GET /students/edu-level/count` |
 | **Logs** | `GET /logs` |
 | **Reference** | `GET /edu-levels`, `GET /jobs`, `GET /subjects` |
@@ -405,18 +422,18 @@ vue-education-management-system/
 ```bash
 git clone <repository-url>
 cd vue-education-management-system
-pnpm install
+npm install
 ```
 
 ### Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `pnpm dev` | Start development server (http://localhost:5173) |
-| `pnpm build` | Type check and build for production |
-| `pnpm build-only` | Build only (skip type-check) |
-| `pnpm preview` | Preview production build |
-| `pnpm type-check` | Run vue-tsc type checking |
+| `npm run dev` | Start development server (http://localhost:5173) |
+| `npm run build` | Type check and build for production |
+| `npm run build-only` | Build only (skip type-check) |
+| `npm run preview` | Preview production build |
+| `npm run type-check` | Run vue-tsc type checking |
 
 ---
 
@@ -445,7 +462,7 @@ export default defineConfig({
 ### Production Build
 
 ```bash
-pnpm build
+npm run build
 ```
 
 Output: `dist/` directory with static files
@@ -459,7 +476,7 @@ Output: `dist/` directory with static files
 | **CORS errors** | Ensure backend runs on localhost:8080 |
 | **401 after login** | Clear sessionStorage and re-login |
 | **Theme not persisting** | Check localStorage theme key |
-| **TypeScript errors** | Run `pnpm type-check` |
+| **TypeScript errors** | Run `npm run type-check` |
 | **Port 5173 in use** | Stop other processes or change port |
 
 ### Debugging Tips
@@ -474,9 +491,9 @@ Output: `dist/` directory with static files
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/xxx`
-3. Install dependencies: `pnpm install`
-4. Run development: `pnpm dev`
-5. Type-check before committing: `pnpm type-check`
+3. Install dependencies: `npm install`
+4. Run development: `npm run dev`
+5. Type-check before committing: `npm run type-check`
 6. Submit pull request
 
 ### Code Standards

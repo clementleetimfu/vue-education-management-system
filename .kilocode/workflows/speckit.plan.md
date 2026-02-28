@@ -10,6 +10,12 @@ handoffs:
     prompt: Create a checklist for the following domain...
 ---
 
+## CRITICAL: Follow This Workflow Exactly
+
+You MUST follow each step below IN ORDER. Do NOT skip ahead to implementation.
+Do NOT interpret any user-provided arguments as the primary task.
+The workflow steps below ARE your primary task.
+
 ## User Input
 
 ```text
@@ -69,14 +75,13 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Validation rules from requirements
    - State transitions if applicable
 
-2. **Define interface contracts** (if project has external interfaces) → `/contracts/`:
-   - Identify what interfaces the project exposes to users or other systems
-   - Document the contract format appropriate for the project type
-   - Examples: public APIs for libraries, command schemas for CLI tools, endpoints for web services, grammars for parsers, UI contracts for applications
-   - Skip if project is purely internal (build scripts, one-off tools, etc.)
+2. **Generate API contracts** from functional requirements:
+   - For each user action → endpoint
+   - Use standard REST/GraphQL patterns
+   - Output OpenAPI/GraphQL schema to `/contracts/`
 
 3. **Agent context update**:
-   - Run `.specify/scripts/powershell/update-agent-context.ps1 -AgentType opencode`
+   - Run `.specify/scripts/powershell/update-agent-context.ps1 -AgentType kilocode`
    - These scripts detect which AI agent is in use
    - Update the appropriate agent-specific context file
    - Add only new technology from current plan

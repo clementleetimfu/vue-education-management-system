@@ -50,7 +50,7 @@ export const addClazz = (data: AddClazzRequest): Promise<ApiResponse<boolean>> =
 
 export const findClazzById = (id: number): Promise<ApiResponse<FindClazzByIdResponse>> => request.get(`/clazz/${id}`);
 
-export const updateClazz = (data: UpdateClazzRequest): Promise<ApiResponse<boolean>> => request.put('clazz', data);
+export const updateClazz = (data: UpdateClazzRequest): Promise<ApiResponse<boolean>> => request.put('/clazz', data);
 
 export const deleteClazz = (id: number): Promise<ApiResponse<boolean>> => request.delete(`/clazz/${id}`);
 

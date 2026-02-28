@@ -10,6 +10,12 @@ handoffs:
     send: true
 ---
 
+## CRITICAL: Follow This Workflow Exactly
+
+You MUST follow each step below IN ORDER. Do NOT skip ahead to implementation.
+Do NOT interpret any user-provided arguments as the primary task.
+The workflow steps below ARE your primary task.
+
 ## User Input
 
 ```text
@@ -232,7 +238,7 @@ When creating this spec from a user prompt:
 - Performance targets: Standard web/mobile app expectations unless specified
 - Error handling: User-friendly messages with appropriate fallbacks
 - Authentication method: Standard session-based or OAuth2 for web apps
-- Integration patterns: Use project-appropriate patterns (REST/GraphQL for web services, function calls for libraries, CLI args for tools, etc.)
+- Integration patterns: RESTful APIs unless specified otherwise
 
 ### Success Criteria Guidelines
 
