@@ -316,7 +316,7 @@ const handleSubmit = async (): Promise<void> => {
 
 ---
 
-## API {#8-api}
+## API
 
 ### HTTP Client Configuration
 
