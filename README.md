@@ -24,9 +24,7 @@ A modern Vue 3 + TypeScript application for managing educational institution dat
 10. [TypeScript Configuration](#typescript-configuration)
 11. [Quick Start](#quick-start)
 12. [Build and Deployment](#build-and-deployment)
-13. [Troubleshooting](#troubleshooting)
-14. [Contributing](#contributing)
-15. [License](#license)
+13. [License](#license)
 
 ---
 
@@ -622,43 +620,6 @@ pnpm build
 ```
 
 Output: `dist/` directory with static files
----
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| **CORS errors** | Ensure backend runs on localhost:8080 |
-| **401 after login** | Clear sessionStorage and re-login |
-| **Theme not persisting** | Check localStorage theme key |
-| **TypeScript errors** | Run `pnpm type-check` |
-| **Port 5173 in use** | Stop other processes or change port |
-
-### Debugging Tips
-
-- **Vue DevTools** - Component inspection
-- **Network Tab** - Debug API calls
-- **Console** - Check runtime errors
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/xxx`
-3. Install dependencies: `pnpm install`
-4. Run development: `pnpm dev`
-5. Type-check before committing: `pnpm type-check`
-6. Submit pull request
-
-### Code Standards
-
-- Use Composition API with `<script setup lang="ts">`
-- Define TypeScript interfaces for all data models
-- Use try-catch for async operations
-- Follow naming conventions (camelCase, PascalCase)
-
----
 
 ## License
 
