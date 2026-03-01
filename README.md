@@ -12,20 +12,21 @@ A modern Vue 3 + TypeScript application for managing educational institution dat
 
 ## Table of Contents
 
-1. [Project Overview](#1-project-overview)
-2. [Table of Contents](#2-table-of-contents)
-3. [Demo & Screenshots](#3-demo--screenshots)
-4. [Tech Stack](#4-tech-stack)
-5. [Key Features and User Roles](#5-key-features-and-user-roles)
-6. [Authentication and Authorization](#6-authentication-and-authorization)
-7. [Technical Architecture](#7-technical-architecture)
-8. [API and Backend Integration](#8-api-and-backend-integration)
-9. [Project Structure](#9-project-structure)
-10. [Quick Start](#10-quick-start)
-11. [Build and Deployment](#11-build-and-deployment)
-12. [Troubleshooting](#12-troubleshooting)
-13. [Contributing](#13-contributing)
-14. [License](#14-license)
+1. [Project Overview](#project-overview)
+2. [Table of Contents](#table-of-contents)
+3. [Demo & Screenshots](#demo--screenshots)
+4. [Tech Stack](#tech-stack)
+5. [Key Features and User Roles](#key-features-and-user-roles)
+6. [Authentication and Authorization](#authentication-and-authorization)
+7. [Technical Architecture](#technical-architecture)
+8. [API](#8-api)
+9. [Project Structure](#project-structure)
+10. [TypeScript Configuration](#typescript-configuration)
+11. [Quick Start](#quick-start)
+12. [Build and Deployment](#build-and-deployment)
+13. [Troubleshooting](#troubleshooting)
+14. [Contributing](#contributing)
+15. [License](#license)
 
 ---
 
@@ -105,6 +106,7 @@ The Vue Education Management System is a frontend application for administering 
 | [Vue](https://vuejs.org/) | ^3.5.25 | Progressive JavaScript framework |
 | [TypeScript](https://www.typescriptlang.org/) | ~5.9.0 | Type-safe JavaScript |
 | [Vite](https://vitejs.dev/) | ^7.2.4 | Build tool and dev server |
+| [pnpm](https://pnpm.io/) | ^10.0.0 | Fast, disk space efficient package manager |
 | [Vue Router](https://router.vuejs.org/) | ^4.6.3 | Official routing library |
 | [Pinia](https://pinia.vuejs.org/) | ^3.0.4 | State management |
 | [pinia-plugin-persistedstate](https://github.com/prazdevs/pinia-plugin-persistedstate) | ^4.7.1 | State persistence |
@@ -207,7 +209,9 @@ router.beforeEach((to, from, next) => {
 
   next()
 })
-### Route Table
+```
+
+## Route Table
 
 > **Note:** Routes from `/dash-emp` through `/log` are nested as children of the `/` Layout route. The Layout component provides the sidebar and navigation wrapper.
 
@@ -312,7 +316,7 @@ const handleSubmit = async (): Promise<void> => {
 
 ---
 
-## API
+## API {#8-api}
 
 ### HTTP Client Configuration
 
@@ -359,6 +363,11 @@ interface PageResult<T> {
   total: number
   rows: T[]
 }
+
+interface Page {
+  page: number
+  pageSize: number
+}
 ```
 
 ### API Endpoints
@@ -366,14 +375,42 @@ interface PageResult<T> {
 | Module | Endpoints |
 |--------|-----------|
 | **Auth** | `POST /auth/login`, `POST /auth/update-password`, `POST /auth/logout` |
-| **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps`, `GET /emps/teachers` |
-| **Students** | `GET /students/search`, `GET /students/{id}`, `POST /students`, `PUT /students`, `DELETE /students` |
+| **Employees** | `GET /emps/search`, `GET /emps/{id}`, `POST /emps`, `PUT /emps`, `DELETE /emps?ids=...`, `GET /emps/teachers` |
+| **Students** | `GET /students/search`, `GET /students/{id}`, `POST /students`, `PUT /students`, `DELETE /students?ids=...` |
 | **Departments** | `GET /depts`, `POST /depts`, `PUT /depts`, `DELETE /depts/{id}` |
 | **Classes** | `GET /clazz/search`, `GET /clazz`, `GET /clazz/{id}`, `POST /clazz`, `PUT /clazz`, `DELETE /clazz/{id}` |
 | **Dashboard** | `GET /emps/jobTitle/count`, `GET /emps/gender/count`, `GET /students/clazz/count`, `GET /students/edu-level/count` |
 | **Logs** | `GET /logs` |
 | **Reference** | `GET /edu-levels`, `GET /jobs`, `GET /subjects` |
 
+> **Note:** Delete endpoints for Employees and Students use query parameters for batch deletion: `DELETE /emps?ids=1,2,3` and `DELETE /students?ids=1,2,3`
+
+### ECharts Theme Utility
+
+**Location:** `src/utils/chartTheme.ts`
+
+Provides theme-aware ECharts configurations that automatically adapt to the dark/light theme:
+
+```typescript
+import { getBarChartOption, getPieChartOption } from '@/utils/chartTheme'
+
+// Theme-aware bar chart
+const option = getBarChartOption(
+  xData,
+  yData,
+  ['#409EFF', '#67C23A']  // gradient colors
+)
+
+// Theme-aware pie chart
+const option = getPieChartOption([
+  { value: 10, name: 'Category A' },
+  { value: 20, name: 'Category B' }
+])
+```
+
+The utility automatically adjusts chart colors based on the current theme:
+- **Light mode**: Dark text, light grid lines, white tooltips
+- **Dark mode**: Light text, dark grid lines, dark tooltips
 ---
 
 ## Project Structure
@@ -383,16 +420,36 @@ vue-education-management-system/
 ├── public/
 │   └── favicon.ico
 ├── src/
-│   ├── api/              # API service layer (auth, emp, student, dept, clazz, etc.)
+│   ├── api/              # API service layer
+│   │   ├── auth.ts       # Authentication endpoints
+│   │   ├── common.ts     # Shared types (ApiResponse, PageResult, Page)
+│   │   ├── emp.ts        # Employee management endpoints
+│   │   ├── empDash.ts    # Employee dashboard analytics
+│   │   ├── student.ts    # Student management endpoints
+│   │   ├── studentDash.ts # Student dashboard analytics
+│   │   ├── dept.ts       # Department management endpoints
+│   │   ├── clazz.ts      # Class management endpoints
+│   │   ├── log.ts        # Activity log endpoints
+│   │   ├── eduLevel.ts   # Reference data - education levels
+│   │   ├── subject.ts    # Reference data - subjects
+│   │   └── jobs.ts      # Reference data - job titles
 │   ├── assets/           # CSS, images
-│   ├── components/       # Reusable components (ThemeToggle)
-│   ├── constants/        # Constants (role enum)
+│   ├── components/       # Reusable components
+│   │   └── ThemeToggle.vue # Dark/light theme toggle button
+│   ├── constants/        # Constants
+│   │   └── role.ts       # Role enum (ROLE_ADMIN, ROLE_EMPLOYEE)
 │   ├── router/           # Route configuration & guards
-│   ├── stores/           # Pinia stores (emp, theme)
-│   ├── utils/            # Utilities (request, permission, chartTheme)
+│   │   └── index.ts      # Vue Router setup
+│   ├── stores/           # Pinia stores
+│   │   ├── emp.ts        # Employee store (sessionStorage persistence)
+│   │   └── theme.ts      # Theme store (localStorage persistence)
+│   ├── utils/            # Utilities
+│   │   ├── request.ts    # Axios HTTP client configuration
+│   │   ├── permission.ts # Permission helpers (isDisabled)
+│   │   └── chartTheme.ts # ECharts theme configurations
 │   ├── views/            # Page components
 │   │   ├── clazz/        # Class management
-│   │   ├── dashboard/    # Dashboards
+│   │   ├── dashboard/    # Dashboards (employee & student)
 │   │   ├── department/   # Department management
 │   │   ├── employee/     # Employee management
 │   │   ├── layout/       # Main layout with sidebar
@@ -403,17 +460,76 @@ vue-education-management-system/
 │   └── main.ts
 ├── .vscode/
 ├── vite.config.ts
-├── tsconfig.json
-└── package.json
+├── tsconfig.json         # Project references configuration
+├── tsconfig.app.json     # App TypeScript config
+├── tsconfig.node.json    # Build tools TypeScript config
+├── package.json
+├── pnpm-lock.yaml         # pnpm lockfile
 ```
 
 ---
+
+## TypeScript Configuration
+
+The project uses a **project references** approach to separate app and build-tool configurations:
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `tsconfig.json` | Root configuration with project references | 
+| `tsconfig.app.json` | Application code TypeScript configuration |
+| `tsconfig.node.json` | Build tools (Vite) TypeScript configuration |
+
+### App Configuration (`tsconfig.app.json`)
+
+```json
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+  "exclude": ["src/**/__tests__/*"],
+  "compilerOptions": {
+    "paths": { "@/*": ["./src/*"] }
+  }
+}
+```
+
+- Extends Vue's DOM TypeScript configuration
+- Includes all Vue and TypeScript files in `src/`
+- Configures `@/` alias for `src/` imports
+- Excludes test files from type checking
+
+### Node Configuration (`tsconfig.node.json`)
+
+```json
+{
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "include": ["vite.config.*"],
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
+  }
+}
+```
+
+- For Vite configuration files
+- Uses Node.js TypeScript configuration
+- Bundler resolution for import behavior
+
+---
+
+
+
+
 
 ## Quick Start
 
 ### Prerequisites
 
 - **Node.js:** `^20.19.0` or `>=22.12.0`
+- **pnpm:** `^10.0.0` (or enable corepack with `corepack enable`)
 - **Backend API:** Running at `http://localhost:8080`
 
 ### Installation
@@ -421,18 +537,18 @@ vue-education-management-system/
 ```bash
 git clone <repository-url>
 cd vue-education-management-system
-npm install
+pnpm install
 ```
 
 ### Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start development server (http://localhost:5173) |
-| `npm run build` | Type check and build for production |
-| `npm run build-only` | Build only (skip type-check) |
-| `npm run preview` | Preview production build |
-| `npm run type-check` | Run vue-tsc type checking |
+| `pnpm dev` | Start development server (http://localhost:5173) |
+| `pnpm build` | Type check and build for production |
+| `pnpm build-only` | Build only (skip type-check) |
+| `pnpm preview` | Preview production build |
+| `pnpm type-check` | Run vue-tsc type checking |
 
 ---
 
@@ -458,14 +574,54 @@ export default defineConfig({
 })
 ```
 
+### Application Bootstrap
+
+**Location:** `src/main.ts`
+
+```typescript
+import { createApp } from 'vue'
+import App from './App.vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import router from './router'
+import './assets/main.css'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+const app = createApp(App)
+
+app.use(pinia)
+app.use(router)
+app.use(ElementPlus)
+
+// Register all Element Plus icons globally
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+
+app.mount('#app')
+```
+
+All Element Plus icons are **globally registered** and can be used directly in components:
+
+```vue
+<template>
+  <el-icon><User /></el-icon>
+  <el-icon><Setting /></el-icon>
+</template>
+```
+
 ### Production Build
 
 ```bash
-npm run build
+pnpm build
 ```
 
 Output: `dist/` directory with static files
-
 ---
 
 ## Troubleshooting
@@ -475,7 +631,7 @@ Output: `dist/` directory with static files
 | **CORS errors** | Ensure backend runs on localhost:8080 |
 | **401 after login** | Clear sessionStorage and re-login |
 | **Theme not persisting** | Check localStorage theme key |
-| **TypeScript errors** | Run `npm run type-check` |
+| **TypeScript errors** | Run `pnpm type-check` |
 | **Port 5173 in use** | Stop other processes or change port |
 
 ### Debugging Tips
@@ -490,9 +646,9 @@ Output: `dist/` directory with static files
 
 1. Fork the repository
 2. Create feature branch: `git checkout -b feature/xxx`
-3. Install dependencies: `npm install`
-4. Run development: `npm run dev`
-5. Type-check before committing: `npm run type-check`
+3. Install dependencies: `pnpm install`
+4. Run development: `pnpm dev`
+5. Type-check before committing: `pnpm type-check`
 6. Submit pull request
 
 ### Code Standards
