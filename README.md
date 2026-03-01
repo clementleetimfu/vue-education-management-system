@@ -207,9 +207,9 @@ router.beforeEach((to, from, next) => {
 
   next()
 })
-```
-
 ### Route Table
+
+> **Note:** Routes from `/dash-emp` through `/log` are nested as children of the `/` Layout route. The Layout component provides the sidebar and navigation wrapper.
 
 | Path | Component | Auth Required | Admin Required |
 |------|-----------|---------------|----------------|
@@ -223,7 +223,6 @@ router.beforeEach((to, from, next) => {
 | `/stud` | Student | Yes | No |
 | `/log` | Activity Log | Yes | Yes |
 
----
 
 ## Technical Architecture
 
