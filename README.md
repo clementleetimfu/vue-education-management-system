@@ -19,7 +19,7 @@ A modern Vue 3 + TypeScript application for managing educational institution dat
 5. [Key Features and User Roles](#key-features-and-user-roles)
 6. [Authentication and Authorization](#authentication-and-authorization)
 7. [Technical Architecture](#technical-architecture)
-8. [API](#8-api)
+8. [API](#api)
 9. [Project Structure](#project-structure)
 10. [TypeScript Configuration](#typescript-configuration)
 11. [Quick Start](#quick-start)
