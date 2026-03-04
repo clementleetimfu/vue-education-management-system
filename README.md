@@ -487,6 +487,7 @@ The project uses a **project references** approach to separate app and build-too
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "paths": { "@/*": ["./src/*"] }
   }
 }
@@ -502,9 +503,17 @@ The project uses a **project references** approach to separate app and build-too
 ```json
 {
   "extends": "@tsconfig/node24/tsconfig.json",
-  "include": ["vite.config.*"],
+  "include": [
+    "vite.config.*",
+    "vitest.config.*",
+    "cypress.config.*",
+    "nightwatch.conf.*",
+    "playwright.config.*",
+    "eslint.config.*"
+  ],
   "compilerOptions": {
     "noEmit": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "types": ["node"]
@@ -512,7 +521,7 @@ The project uses a **project references** approach to separate app and build-too
 }
 ```
 
-- For Vite configuration files
+- For Vite and other tool configuration files
 - Uses Node.js TypeScript configuration
 - Bundler resolution for import behavior
 
@@ -595,22 +604,17 @@ const app = createApp(App)
 app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
-
-// Register all Element Plus icons globally
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-
 app.mount('#app')
 ```
 
-All Element Plus icons are **globally registered** and can be used directly in components:
+All Element Plus icons are globally registered and can be used directly in components:
 
 ```vue
-<template>
-  <el-icon><User /></el-icon>
-  <el-icon><Setting /></el-icon>
-</template>
+<el-icon><User /></el-icon>
+<el-icon><Setting /></el-icon>
 ```
 
 ### Production Build
